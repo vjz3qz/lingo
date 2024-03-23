@@ -85,7 +85,7 @@ def get_user_data(user_id):
         return None, None
     else:
         user_data = response["data"][0]
-        return user_data["name"], user_data["interests"]
+        return user_data["name"], user_data["previous_knowledge"], user_data["interests"]
 
 
 def get_user_last_proficiency_by_language(user_id, language):
@@ -121,4 +121,4 @@ def get_user_proficiency_scores_by_language(user_id, language):
         return []
     else:
         proficiency_scores = [(record["timestamp"], record["proficiency_level"]) for record in response["data"]]
-        return proficiency_scores
+        return proficiency_scores, response["data"][0]["feedback"]

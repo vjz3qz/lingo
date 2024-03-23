@@ -6,7 +6,7 @@ from application.controllers.chat_controller import (
     analyze_proficiency,
 )
 
-from application.services.database_service import create_user
+from application.services.database_service import create_user, get_user_data
 
 from flask import jsonify, request
 import os
@@ -28,6 +28,11 @@ def create_user():
 
     # Return success response
     return jsonify({"message": "User created successfully"})
+
+@v1.route("/get-user/<user_id>", methods=["GET"])
+def get_user(user_id):
+    name, previous_knowledge, interests = get_user_data(user_id)
+    return jsonify({"name": name, "previous_knowledge": previous_knowledge, "interests": interests})
 
 # chat endpoint
 @v1.route("/chat", methods=["POST"])
@@ -63,3 +68,8 @@ def analyze_proficiency():
 
     # Return the proficiency analysis response
     return jsonify({"proficiency_level": proficiency_level, "feedback": feedback})
+
+@v1.route("/get-proficiency-scores/<user_id>/<language>", methods=["GET"])
+def get_proficiency_scores(user_id, language):
+    proficiency_scores, last_feedback = get_user_proficiency_scores_by_language(user_id, language)
+    return jsonify({"proficiency_scores": proficiency_scores, "last_feedback": last_feedback})
