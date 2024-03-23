@@ -6,12 +6,78 @@ from application.controllers.chat_controller import (
     analyze_proficiency,
 )
 
-from application.services.database_service import create_user_in_db, update_user_in_db, get_user_data
+from application.services.database_service import create_user_in_db, update_user_in_db, get_user_data, signup_user, login_user, logout_user
 
 from flask import jsonify, request
 import os
 from flask import abort
 
+# sign up endpoint
+@v1.route("/sign-up", methods=["POST"])
+def sign_up():
+    # Get request data
+    data = request.get_json()
+
+    # Extract user ID and user data from request body
+    email = data.get("email", "")
+    if not email:
+        return jsonify({"message": "Email is required"}), 400
+    password = data.get("password", "")
+    if not password:
+        return jsonify({"message": "Password is required"}), 400
+
+    # Call signup user function
+    status = signup_user(email, password)
+    if status == 200:
+        # Return success response
+        return jsonify({"message": "User signed up successfully"}), 200
+    elif status == 500:
+        # Return failure response
+        return jsonify({"message": "Failed to sign up user"}), 500
+    else:
+        # Return generic error response
+        abort(500)
+
+# log in endpoint
+@v1.route("/log-in", methods=["POST"])
+def log_in():
+    # Get request data
+    data = request.get_json()
+
+    # Extract user ID and user data from request body
+    email = data.get("email", "")
+    if not email:
+        return jsonify({"message": "Email is required"}), 400
+    password = data.get("password", "")
+    if not password:
+        return jsonify({"message": "Password is required"}), 400
+
+    # Call login user function
+    status = login_user(email, password)
+    if status == 200:
+        # Return success response
+        return jsonify({"message": "User logged in successfully"}), 200
+    elif status == 500:
+        # Return failure response
+        return jsonify({"message": "Failed to log in user"}), 500
+    else:
+        # Return generic error response
+        abort(500)
+
+# log out endpoint
+@v1.route("/log-out", methods=["POST"])
+def log_out():
+    # Call logout user function
+    status = logout_user()
+    if status == 200:
+        # Return success response
+        return jsonify({"message": "User logged out successfully"}), 200
+    elif status == 500:
+        # Return failure response
+        return jsonify({"message": "Failed to log out user"}), 500
+    else:
+        # Return generic error response
+        abort(500)
 
 # create user endpoint
 @v1.route("/create-user", methods=["POST"])
@@ -20,9 +86,9 @@ def create_user():
     data = request.get_json()
 
     # Extract user ID and user data from request body
-    name = data.get("user_id", "")
+    name = data.get("name", "")
     if not name:
-        return jsonify({"message": "User ID is required"}), 400
+        return jsonify({"message": "Name is required"}), 400
     previous_knowledge = data.get("previous_knowledge", "")
     if not previous_knowledge:
         return jsonify({"message": "Previous knowledge is required"}), 400
@@ -42,7 +108,7 @@ def create_user():
         # Return generic error response
         abort(500)
 
-
+#TODO merge create/update user
 # update user endpoint
 @v1.route("/update-user", methods=["POST"])
 def update_user():

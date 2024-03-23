@@ -28,6 +28,54 @@ def init_db(supabase_url, supabase_key):
 db_client = init_db(supabase_url, supabase_key)
 
 
+def signup_user(email, password):
+    """
+    Sign up a new user in the database
+    """
+    logging.info(f"Signing up user: {email}")
+    
+    # Sign up user in Supabase
+    response = db_client.auth.sign_up(email, password)
+    
+    if response["error"]:
+        logging.error(f"Failed to sign up user: {response['error']}")
+        return 500
+    else:
+        logging.info(f"User {email} signed up successfully")
+        return 200
+
+def login_user(email, password):
+    """
+    Log in an existing user in the database
+    """
+    logging.info(f"Logging in user: {email}")
+    
+    # Log in user in Supabase
+    response = db_client.auth.sign_in_with_password({"email": email, "password": password})
+    
+    if response["error"]:
+        logging.error(f"Failed to log in user: {response['error']}")
+        return 500
+    else:
+        logging.info(f"User {email} logged in successfully")
+        return 200
+
+def logout_user():
+    """
+    Log out the current user
+    """
+    logging.info("Logging out user")
+    
+    # Log out user in Supabase
+    response = db_client.auth.sign_out()
+    
+    if response["error"]:
+        logging.error(f"Failed to log out user: {response['error']}")
+        return 500
+    else:
+        logging.info("User logged out successfully")
+        return 200
+
 def create_user_in_db(name, previous_knowledge, interests):
     """
     Create a new user in the database
@@ -148,3 +196,4 @@ def get_user_proficiency_scores_by_language(user_id, language):
     else:
         proficiency_scores = [(record["timestamp"], record["proficiency_level"]) for record in response["data"]]
         return proficiency_scores, response["data"][0]["feedback"]
+
