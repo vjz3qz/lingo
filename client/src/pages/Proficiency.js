@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Container, Typography, Paper, Box, Drawer, List, ListItem, ListItemText, Grid, IconButton } from '@mui/material'; // Make sure IconButton is included here
-import MenuIcon from '@mui/icons-material/Menu'; // Import the Menu icon for the button
+import { Container, Typography, Paper, Box, Drawer, List, ListItem, ListItemText, Grid, IconButton, Button } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 
 
@@ -29,6 +30,8 @@ const languageData = {
 const drawerWidth = 240;
 
 function ProficiencyPage() {
+    const navigate = useNavigate(); // Create an instance of useNavigate
+
     const [selectedLanguage, setSelectedLanguage] = useState('Spanish');
     const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State to manage drawer open/close
 
@@ -123,6 +126,11 @@ function ProficiencyPage() {
             </Paper>
             </Grid>
         </Grid>
+        <Box sx={{ width: '100%', mt: 3, display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" color="primary" onClick={() => navigate('/home')}>
+            Back to Home
+            </Button>
+        </Box>
         </Container>
     </Box>
     );
