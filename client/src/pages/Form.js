@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from "react";
+import { Container, TextField, Button, Typography, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function LanguageLearningForm() {
   const [form, setForm] = useState({
-    name: '',
-    previous_knowledge: '',
-    interests: '',
+    name: "",
+    previous_knowledge: "",
+    interests: "",
   });
 
   const [errors, setErrors] = useState({
@@ -20,15 +20,15 @@ function LanguageLearningForm() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setForm(prevForm => ({
+    setForm((prevForm) => ({
       ...prevForm,
-      [name]: value
+      [name]: value,
     }));
     // Also clear error state upon change
     if (errors[name]) {
-      setErrors(prevErrors => ({
+      setErrors((prevErrors) => ({
         ...prevErrors,
-        [name]: false
+        [name]: false,
       }));
     }
   };
@@ -36,7 +36,7 @@ function LanguageLearningForm() {
   const validateForm = () => {
     const newErrors = {};
     let isFormValid = true;
-    Object.keys(form).forEach(key => {
+    Object.keys(form).forEach((key) => {
       if (!form[key].trim()) {
         newErrors[key] = true;
         isFormValid = false;
@@ -48,29 +48,31 @@ function LanguageLearningForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!validateForm()){
-        return
-    };
+    if (!validateForm()) {
+      return;
+    }
 
     try {
-      const response = await axios.post('/api/v1/chat', form);
-      console.log('Server response:', response.data);
-      navigate('/home');
+      const response = await axios.post("/api/v1/chat", form);
+      console.log("Server response:", response.data);
+      navigate("/home");
     } catch (error) {
-      console.error('Submitting form failed:', error);
+      console.error("Submitting form failed:", error);
     }
   };
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{
-        bgcolor: 'background.paper',
-        p: 4,
-        borderRadius: 2,
-        boxShadow: 1,
-        mt: 2,
-        mb: 3,
-      }}>
+      <Box
+        sx={{
+          bgcolor: "background.paper",
+          p: 4,
+          borderRadius: 2,
+          boxShadow: 1,
+          mt: 2,
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" component="h1" gutterBottom>
           Language Learning Profile
         </Typography>
@@ -100,7 +102,7 @@ function LanguageLearningForm() {
             rows={1}
             error={errors.previous_knowledge}
             helperText={errors.previous_knowledge && "This field is required."}
-            sx={{ backgroundColor: '#fff', marginBottom: 2 }}
+            sx={{ backgroundColor: "#fff", marginBottom: 2 }}
           />
 
           <TextField
@@ -115,7 +117,7 @@ function LanguageLearningForm() {
             rows={5}
             error={errors.interests}
             helperText={errors.interests && "This field is required."}
-            sx={{ backgroundColor: '#fff', marginBottom: 2 }}
+            sx={{ backgroundColor: "#fff", marginBottom: 2 }}
           />
 
           <Button
@@ -124,9 +126,9 @@ function LanguageLearningForm() {
             type="submit"
             sx={{
               marginTop: 2,
-              bgcolor: 'primary.main',
-              '&:hover': {
-                bgcolor: 'primary.dark',
+              bgcolor: "primary.main",
+              "&:hover": {
+                bgcolor: "primary.dark",
               },
             }}
           >
