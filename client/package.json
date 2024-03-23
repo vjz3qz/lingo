@@ -15,9 +15,12 @@
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.2",
+<<<<<<< HEAD
     "chartjs-plugin-zoom": "^2.0.1",
     "date-fns": "^3.6.0",
     "moment": "^2.30.1",
+=======
+>>>>>>> f4a08a29e1a216adc523b26ec50e68fc67c89bf5
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-router-dom": "^6.22.3",
