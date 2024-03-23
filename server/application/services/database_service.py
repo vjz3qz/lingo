@@ -33,48 +33,48 @@ def signup_user(email, password):
     Sign up a new user in the database
     """
     logging.info(f"Signing up user: {email}")
-    
-    # Sign up user in Supabase
-    response = db_client.auth.sign_up(email, password)
-    
-    if response["error"]:
-        logging.error(f"Failed to sign up user: {response['error']}")
-        return 500
-    else:
+    try:
+        # Sign up user in Supabase
+        response = db_client.auth.sign_up({"email": email, "password": password})
+
+        session = response['session']
+
         logging.info(f"User {email} signed up successfully")
-        return 200
+        return 200, session
+    except:
+        logging.error(f"Failed to sign up user.")
+        return 500, None
 
 def login_user(email, password):
     """
     Log in an existing user in the database
     """
     logging.info(f"Logging in user: {email}")
-    
-    # Log in user in Supabase
-    response = db_client.auth.sign_in_with_password({"email": email, "password": password})
-    
-    if response["error"]:
-        logging.error(f"Failed to log in user: {response['error']}")
-        return 500
-    else:
+    try:
+        # Log in user in Supabase
+        response = db_client.auth.sign_in_with_password({"email": email, "password": password})
+
+        session = response['session']
+
         logging.info(f"User {email} logged in successfully")
-        return 200
+        return 200, session
+    except:
+        logging.error(f"Failed to log in user.")
+        return 500, None
 
 def logout_user():
     """
     Log out the current user
     """
     logging.info("Logging out user")
-    
-    # Log out user in Supabase
-    response = db_client.auth.sign_out()
-    
-    if response["error"]:
-        logging.error(f"Failed to log out user: {response['error']}")
-        return 500
-    else:
+    try:
+        # Log out user in Supabase
+        response = db_client.auth.sign_out()
         logging.info("User logged out successfully")
         return 200
+    except:
+        logging.error(f"Failed to log out user.")
+        return 500
 
 def create_user_in_db(name, previous_knowledge, interests):
     """
@@ -137,12 +137,13 @@ def create_proficiency_record(user_id, language, proficiency_level, feedback):
         "proficiency_level": proficiency_level,
         "feedback": feedback
     }
-    response = db_client.table("proficiency").insert(proficiency_data).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to create proficiency record: {response['error']}")
-    else:
+    try:
+        data, count = db_client.table("proficiency").insert(proficiency_data).execute()
         logging.info(f"Proficiency record created successfully")
+        return 200
+    except:
+        logging.error(f"Failed to create proficiency record: {data, count}")
+        return 500
 
 
 def get_user_data(user_id):
@@ -150,16 +151,13 @@ def get_user_data(user_id):
     Get user data from the database
     """
     logging.info(f"Getting user data for user: {user_id}")
-    
-    # Query user data from Supabase
-    response = db_client.table("users").select("*").eq("name", user_id).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to get user data: {response['error']}")
-        return None, None
-    else:
-        user_data = response["data"][0]
-        return user_data["name"], user_data["previous_knowledge"], user_data["interests"]
+    try:
+        # Query user data from Supabase
+        response = db_client.table("users").select("*").eq("name", user_id).execute()
+        # TODO: parse response
+    except:
+        logging.error(f"Failed to get user data: {response}")
+        return None, None, None
 
 
 def get_user_last_proficiency_by_language(user_id, language):

@@ -8,7 +8,7 @@ from application.controllers.chat_controller import (
 
 from application.services.database_service import create_user_in_db, update_user_in_db, get_user_data, signup_user, login_user, logout_user
 
-from flask import jsonify, request
+from flask import jsonify, request, abort, make_response
 import os
 from flask import abort
 
@@ -27,9 +27,13 @@ def sign_up():
         return jsonify({"message": "Password is required"}), 400
 
     # Call signup user function
-    status = signup_user(email, password)
+    status, session = signup_user(email, password)
     if status == 200:
         # Return success response
+
+        response = make_response(jsonify({'message': 'Logged in successfully'}))
+        response.set_cookie('access_token', session['access_token'], httponly=True, secure=True)
+        return response
         return jsonify({"message": "User signed up successfully"}), 200
     elif status == 500:
         # Return failure response
@@ -82,6 +86,8 @@ def log_out():
 # create user endpoint
 @v1.route("/create-user", methods=["POST"])
 def create_user():
+    # Get access token from cookie
+    access_token = request.cookies.get('access_token')
     # Get request data
     data = request.get_json()
 
