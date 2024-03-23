@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Select, MenuItem, InputLabel, FormControl, Typography, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
 function LanguageLearningForm() {
   const [form, setForm] = useState({
@@ -22,29 +21,11 @@ function LanguageLearningForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const endpoint = '/chat';
+    // Here you would send the form data to your backend
+    // For now, let's just log it to the console
+    console.log(form);
     
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Include other headers as required, e.g., authorization tokens
-        },
-        body: JSON.stringify(form),
-      });
-  
-      if (response.ok) {
-        // If the server responds with a success code, redirect to /home
-        navigate('/home');
-      } else {
-        console.error('HTTP error:', response.status);
-        // Optionally, implement error handling logic here
-      }
-    } catch (error) {
-      console.error('Submitting form failed:', error);
-      // Optionally, implement error handling logic here
-    }
+    const endpoint = '/chat';
   };
 
   return (
