@@ -90,7 +90,7 @@ function LanguageLearningForm() {
         
         {/* Submit Button */}
         <Button variant="contained" color="primary" type="submit" style={{ marginTop: '20px' }}>
-          Start Learning
+          Submit Profile
         </Button>
       </form>
     </Container>
