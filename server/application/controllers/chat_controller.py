@@ -1,6 +1,6 @@
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts.chat import ChatPromptTemplate, HumanMessagePromptTemplate
-from application.services.database_service import db_client, get_user_data
+from application.services.database_service import db_client, get_user_data, get_user_proficiency, get_user_last_proficiency_by_language, create_proficiency_record
 from application.services.nlp_service import embeddings, chat_model
 import logging
 
