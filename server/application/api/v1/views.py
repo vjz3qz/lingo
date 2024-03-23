@@ -6,7 +6,7 @@ from application.controllers.chat_controller import (
     analyze_proficiency,
 )
 
-from application.services.database_service import create_user, get_user_data
+from application.services.database_service import create_user, update_user, get_user_data
 
 from flask import jsonify, request
 import os
@@ -28,6 +28,26 @@ def create_user():
 
     # Return success response
     return jsonify({"message": "User created successfully"})
+
+
+# update user endpoint
+@v1.route("/update-user", methods=["POST"])
+def update_user():
+    # Get request data
+    data = request.get_json()
+
+    # Extract user ID and user data from request body
+    user_id = data.get("user_id", "")
+    name = data.get("name", "")
+    previous_knowledge = data.get("previous_knowledge", "")
+    interests = data.get("interests", "")
+
+    # Call update user function
+    update_user(user_id, name, previous_knowledge, interests)
+
+    # Return success response
+    return jsonify({"message": "User updated successfully"})
+
 
 @v1.route("/get-user/<user_id>", methods=["GET"])
 def get_user(user_id):
