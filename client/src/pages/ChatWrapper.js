@@ -1,13 +1,13 @@
-// Home.js
+// ChatWrapper.js
 
 import React, { useState } from "react";
 import "../styles/Home.css";
 import Header from "../ui/Header";
 import Chat from "../components/Chat";
 
-const Home = () => {
+const ChatWrapper = () => {
   const user = {
-    name: "Rahul Kumar",
+    name: "Varun Pasupuleti",
     avatar: "path-to-avatar-image.png",
   };
 
@@ -21,4 +21,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default ChatWrapper;
