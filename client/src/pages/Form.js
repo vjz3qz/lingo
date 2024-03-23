@@ -8,12 +8,7 @@ function LanguageLearningForm() {
     reason: '',
     previousKnowledge: '',
     interests: '',
-    learningGoals: '',
-    timeCommitment: '',
-    preferredLearningStyle: '',
-    proficiencyLevel: '',
-    learningContext: '',
-    // ... add additional state fields as needed
+
   });
 
   const handleChange = (event) => {
@@ -26,34 +21,12 @@ function LanguageLearningForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // Replace with your chatbot backend API endpoint
-    const chatBotAPIEndpoint = 'https://yourbackend.domain/api/messages';
-
-    try {
-      const response = await fetch(chatBotAPIEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Include other headers as required, like authorization tokens
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      // Handle response data
-      console.log(data);
-      // Here you can redirect the user to the chat interface or perform other actions
-    } catch (error) {
-      console.error('Error submitting form to chatbot:', error);
-      // Handle errors, such as displaying a message to the user
-    }
+    // Here you would send the form data to your backend
+    // For now, let's just log it to the console
+    console.log(form);
+    
+    const endpoint = '/chat';
   };
-
-  // Add additional form fields as needed
 
   return (
     <Container maxWidth="sm">
@@ -62,10 +35,28 @@ function LanguageLearningForm() {
       </Typography>
       <form onSubmit={handleSubmit}>
         {/* Name Field */}
-        {/* ... */}
+        <TextField
+          fullWidth
+          label="What should we call you?"
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          margin="normal"
+        />
         
         {/* Language Selector */}
-        {/* ... */}
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="language-selector-label">Select the language you are trying to learn</InputLabel>
+          <Select
+            labelId="language-selector-label"
+            name="language"
+            value={form.language}
+            onChange={handleChange}
+          >
+            <MenuItem value="Spanish">Spanish</MenuItem>
+            {/* Add more languages here */}
+          </Select>
+        </FormControl>
         
         {/* Reason for Learning */}
         <TextField
@@ -78,25 +69,24 @@ function LanguageLearningForm() {
         />
         
         {/* Previous Language Knowledge */}
-        {/* ... */}
+        <TextField
+          fullWidth
+          label="Specify any previous language knowledge."
+          name="previousKnowledge"
+          value={form.previousKnowledge}
+          onChange={handleChange}
+          margin="normal"
+        />
         
         {/* Interests */}
-        {/* ... */}
-        
-        {/* Learning Goals */}
-        {/* ... */}
-        
-        {/* Time Commitment */}
-        {/* ... */}
-        
-        {/* Preferred Learning Style */}
-        {/* ... */}
-        
-        {/* Proficiency Level */}
-        {/* ... */}
-        
-        {/* Learning Context */}
-        {/* ... */}
+        <TextField
+          fullWidth
+          label="List any of your interests."
+          name="interests"
+          value={form.interests}
+          onChange={handleChange}
+          margin="normal"
+        />
         
         {/* Submit Button */}
         <Button variant="contained" color="primary" type="submit" style={{ marginTop: '20px' }}>
