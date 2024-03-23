@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Box, Alert } from '@mui/material'; // Import Alert for error message display
+import { Container, TextField, Button, Typography, Box, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -14,7 +14,7 @@ function LanguageLearningForm() {
     name: false,
     previous_knowledge: false,
     interests: false,
-    general: '', // General error for form submission issues
+    general: '',
   });
 
   const navigate = useNavigate();
@@ -25,18 +25,17 @@ function LanguageLearningForm() {
       ...prevForm,
       [name]: value
     }));
-    // Clear error state upon change
     if (errors[name] || errors.general) {
       setErrors(prevErrors => ({
         ...prevErrors,
         [name]: false,
-        general: '', // Also clear the general error if any field is modified
+        general: '',
       }));
     }
   };
 
   const validateForm = () => {
-    const newErrors = { ...errors, general: '' }; // Reset general error on validation
+    const newErrors = { ...errors, general: '' };
     let isFormValid = true;
     Object.keys(form).forEach(key => {
       if (!form[key].trim()) {
@@ -58,42 +57,115 @@ function LanguageLearningForm() {
       navigate('/home');
     } catch (error) {
       console.error('Submitting form failed:', error);
-      // Update state with a general error message
+      let errorMessage = 'Failed to submit form. Please try again later.';
+      // Check for server not found or network error
+      if (!error.response) {
+        errorMessage = 'Server not found or network error.';
+      } else if (error.response.status === 404) {
+        errorMessage = 'Endpoint not found.';
+      } else if (error.response.data && error.response.data.errors) {
+        // Assuming the server responds with an object that contains an 'errors' field with specific field validations
+        const fieldErrors = error.response.data.errors;
+        Object.keys(fieldErrors).forEach(field => {
+          if (form[field] !== undefined) {
+            setErrors(prevErrors => ({
+              ...prevErrors,
+              [field]: fieldErrors[field], // Set the specific error message for the field
+            }));
+          }
+        });
+        return; // Exit the function to avoid overwriting specific field errors with the general error message
+      }
+      // Set general error message if specific field errors are not set
       setErrors(prevErrors => ({
         ...prevErrors,
-        general: 'Failed to submit form. Please try again later.' // Or use error.message for more specific errors
+        general: errorMessage,
       }));
     }
   };
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{
-        bgcolor: 'background.paper',
-        p: 4,
-        borderRadius: 2,
-        boxShadow: 1,
-        mt: 2,
-        mb: 3,
-      }}>
+      <Box
+        sx={{
+          bgcolor: "background.paper",
+          p: 4,
+          borderRadius: 2,
+          boxShadow: 1,
+          mt: 2,
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" component="h1" gutterBottom>
           Language Learning Profile
         </Typography>
         <form onSubmit={handleSubmit}>
-          {/* Form fields... */}
+            {/* Conditional Alert for displaying general error messages */}
+            {errors.general && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {errors.general}
+                </Alert>
+            )}
+          <TextField
+            fullWidth
+            label="What should we call you?"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            margin="normal"
+            variant="outlined"
+            error={errors.name}
+            helperText={errors.name && "This field is required."}
+            sx={{ marginBottom: 2 }}
+          />
 
-          {/* Display a general error message if present */}
-          {errors.general && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {errors.general}
-            </Alert>
-          )}
+          <TextField
+            fullWidth
+            label="Specify any previous language knowledge."
+            name="previous_knowledge"
+            value={form.previous_knowledge}
+            onChange={handleChange}
+            margin="normal"
+            variant="outlined"
+            multiline
+            rows={1}
+            error={errors.previous_knowledge}
+            helperText={errors.previous_knowledge && "This field is required."}
+            sx={{ backgroundColor: "#fff", marginBottom: 2 }}
+          />
 
-          {/* Submit button... */}
+          <TextField
+            fullWidth
+            label="List any of your interests."
+            name="interests"
+            value={form.interests}
+            onChange={handleChange}
+            margin="normal"
+            variant="outlined"
+            multiline
+            rows={5}
+            error={errors.interests}
+            helperText={errors.interests && "This field is required."}
+            sx={{ backgroundColor: "#fff", marginBottom: 2 }}
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            sx={{
+              marginTop: 2,
+              bgcolor: "primary.main",
+              "&:hover": {
+                bgcolor: "primary.dark",
+              },
+            }}
+          >
+            Submit Profile
+          </Button>
         </form>
       </Box>
     </Container>
   );
 }
-
 export default LanguageLearningForm;
