@@ -18,13 +18,11 @@ def chat():
 
     # Extract conversation history and user ID from request body
     conversation_history = data.get("conversation_history", [])
+    language = data.get("language", "en")
     user_id = data.get("user_id", "")
 
     # Call chat controller to get chat response
-    response = get_chat_response(conversation_history, user_id)
-
-    # Save chat history to database
-    # save_chat_history(conversation_history, user_id, response)
+    response = get_chat_response(conversation_history, user_id, language)
 
     # Return the chat response
     return jsonify({"response": response})
@@ -38,10 +36,11 @@ def chat():
 
         # Extract conversation history and user ID from request body
         conversation_history = data.get("conversation_history", [])
+        language = data.get("language", "en")
         user_id = data.get("user_id", "")
 
         # Call analyze proficiency function
-        proficiency_level, feedback = analyze_proficiency(conversation_history, user_id)
+        proficiency_level, feedback = analyze_proficiency(conversation_history, user_id, language)
 
         # Return the proficiency analysis response
         return jsonify({"proficiency_level": proficiency_level, "feedback": feedback})
