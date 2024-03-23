@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, styled } from '@mui/material';
+import axios from 'axios';
 
 // Language options
 const languages = ['Spanish', 'German', 'French'];
@@ -94,8 +95,22 @@ function HomePage() {
     };
   }, []);
 
-  const handleStartConversation = () => {
-    navigate(`/conversation/${languages[selectedLanguageIndex].toLowerCase()}`);
+//   const handleStartConversation = () => {
+//     navigate(`/conversation/${languages[selectedLanguageIndex].toLowerCase()}`);
+//   };
+
+  const handleStartConversation = async () => {
+    const language = languages[selectedLanguageIndex].toLowerCase();
+  
+    try {
+      // Send the selected language to the server
+      const response = await axios.post('/api/v1/chat', { language });
+      console.log('Server response:', response.data);
+      // Navigate to the chat page after successfully sending the data
+      navigate('/conversation');
+    } catch (error) {
+      console.error('Starting conversation failed:', error);
+    }
   };
 
   return (
