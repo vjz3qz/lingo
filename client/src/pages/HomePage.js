@@ -1,54 +1,59 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Button, Box } from '@mui/material';
 
 function HomePage() {
-  const [name, setName] = useState('User'); // Replace 'User' with actual user name from your authentication logic or state
-  const [proficiency, setProficiency] = useState('Beginner'); // Replace 'Beginner' with actual proficiency from user data
+  const navigate = useNavigate();
+  const [name, setName] = useState('User'); // Replace 'User' with actual user name
+  const [proficiency, setProficiency] = useState('Beginner'); // Replace 'Beginner' with actual proficiency
 
   useEffect(() => {
-    // You can fetch the user's name and proficiency from the database or local storage here
-    // and update the state accordingly.
+    // Fetch and set the user's name and proficiency here
   }, []);
 
   const handleStartConversation = () => {
-    // Implement the logic to start a conversation with the AI
+    // Logic for starting a conversation
     console.log('Start conversation');
   };
 
   const handleEditPersonalization = () => {
-    // Implement the logic to edit personalization
-    console.log('Edit personalization');
+    navigate('/'); // Navigate to the Form page which is your root URL
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Container maxWidth="sm" sx={{
+      display: 'flex', 
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh', // Use the full screen height
+      textAlign: 'center', // Center text horizontally
+    }}>
+      <Typography variant="h3" component="h1" gutterBottom>
         Welcome, {name}
       </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', my: 4 }}>
-        <Typography variant="subtitle1" gutterBottom>
-          Your Current Proficiency
-        </Typography>
-        <Typography variant="h5" gutterBottom>
-          {proficiency} in Spanish
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleStartConversation}
-          sx={{ mt: 2, mb: 1 }}
-        >
-          Start Conversation
-        </Button>
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={handleEditPersonalization}
-          sx={{ mt: 1 }}
-        >
-          Edit Personalization
-        </Button>
-      </Box>
+      <Typography variant="subtitle1" gutterBottom>
+        Your Current Proficiency
+      </Typography>
+      <Typography variant="h5" gutterBottom sx={{ mb: 4 }}>
+        {proficiency} in Spanish
+      </Typography>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleStartConversation}
+        sx={{ mb: 2, width: '100%' }} // Full width button
+      >
+        Start Conversation
+      </Button>
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={handleEditPersonalization}
+        sx={{ width: '100%' }} // Full width button
+      >
+        Edit Personalization
+      </Button>
     </Container>
   );
 }
