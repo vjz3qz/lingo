@@ -1,74 +1,54 @@
-import React from 'react';
-import { Typography, Button, Container, Paper, Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    minHeight: '100vh',
-    backgroundColor: theme.palette.background.default,
-  },
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: theme.spacing(2),
-  },
-  button: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+import React, { useState, useEffect } from 'react';
+import { Container, Typography, Button, Box } from '@mui/material';
 
 function HomePage() {
-  const classes = useStyles();
-  const [name, setName] = React.useState('Cole'); // You will get the name from your auth context or user state
-  const [proficiency, setProficiency] = React.useState('Beginner'); // This should come from user data
+  const [name, setName] = useState('User'); // Replace 'User' with actual user name from your authentication logic or state
+  const [proficiency, setProficiency] = useState('Beginner'); // Replace 'Beginner' with actual proficiency from user data
 
-  // Dummy function for editing personalization, should link to actual route or state change
-  const handleEditPersonalization = () => {
-    console.log('Edit personalization clicked');
+  useEffect(() => {
+    // You can fetch the user's name and proficiency from the database or local storage here
+    // and update the state accordingly.
+  }, []);
+
+  const handleStartConversation = () => {
+    // Implement the logic to start a conversation with the AI
+    console.log('Start conversation');
   };
 
-  // Dummy function for starting a conversation, should link to actual functionality
-  const handleStartConversation = () => {
-    console.log('Start conversation clicked');
+  const handleEditPersonalization = () => {
+    // Implement the logic to edit personalization
+    console.log('Edit personalization');
   };
 
   return (
-    <Container component="main" maxWidth="xs" className={classes.root}>
-      <Paper elevation={3} className={classes.paper}>
-        <Typography component="h1" variant="h5">
-          Welcome, {name}
+    <Container maxWidth="sm" sx={{ mt: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Welcome, {name}
+      </Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', my: 4 }}>
+        <Typography variant="subtitle1" gutterBottom>
+          Your Current Proficiency
         </Typography>
-        <Box my={2}>
-          <Typography component="p" variant="body1">
-            PROFICIENCY
-          </Typography>
-          <Typography component="p" variant="subtitle1">
-            {proficiency} in Spanish
-          </Typography>
-        </Box>
+        <Typography variant="h5" gutterBottom>
+          {proficiency} in Spanish
+        </Typography>
         <Button
           variant="contained"
           color="primary"
-          className={classes.button}
           onClick={handleStartConversation}
+          sx={{ mt: 2, mb: 1 }}
         >
           Start Conversation
         </Button>
         <Button
           variant="outlined"
           color="secondary"
-          className={classes.button}
           onClick={handleEditPersonalization}
+          sx={{ mt: 1 }}
         >
           Edit Personalization
         </Button>
-      </Paper>
+      </Box>
     </Container>
   );
 }
