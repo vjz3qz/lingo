@@ -1,75 +1,145 @@
-import React from 'react';
-import { Typography, Button, Container, Paper, Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Button, styled } from '@mui/material';
+import axios from 'axios';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    minHeight: '100vh',
-    backgroundColor: theme.palette.background.default,
+// Language options
+const languages = ['Spanish', 'German', 'French'];
+
+const FullScreenContainer = styled(Box)({
+  height: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#fff',
+});
+
+const CustomButton = styled(Button)(({ theme }) => ({
+  fontWeight: 'bold',
+  borderRadius: '20px',
+  padding: '10px 30px',
+  fontSize: '1rem',
+  letterSpacing: '0.1rem',
+  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'scale(1.05)',
+    boxShadow: '0px 3px 15px rgba(0,0,0,0.2)',
   },
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: theme.spacing(2),
+  margin: '0 10px',
+  '&.MuiButton-contained': {
+    color: '#3f51b5',
+    backgroundColor: '#ffffff',
   },
-  button: {
-    margin: theme.spacing(3, 0, 2),
+  '&.MuiButton-outlined': {
+    color: '#3f51b5',
+    borderColor: '#3f51b5',
   },
 }));
 
+const LanguageButton = styled(CustomButton)({
+  position: 'relative',
+  padding: '20px 40px',
+  overflow: 'hidden',
+  backgroundColor: '#e3f2fd',
+  '&:hover': {
+    backgroundColor: '#bbdefb',
+  },
+  fontSize: '1.5rem', // Larger font size
+  width: '300px', // Increased width
+  height: '80px', // Increased height
+});
+
+const LanguageOption = styled(Typography)({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  whiteSpace: 'nowrap',
+  userSelect: 'none',
+  fontSize: '1.5rem', // Larger font size
+  width: '100%', // Full width to contain the text
+  textAlign: 'center',
+  visibility: 'hidden',
+  opacity: 0,
+  transition: 'visibility 0s, opacity 0.5s linear',
+});
+
 function HomePage() {
-  const classes = useStyles();
-  const [name, setName] = React.useState('Cole'); // You will get the name from your auth context or user state
-  const [proficiency, setProficiency] = React.useState('Beginner'); // This should come from user data
+  const navigate = useNavigate();
+  const [selectedLanguageIndex, setSelectedLanguageIndex] = useState(0);
+  const languageButtonRef = useRef(null);
 
-  // Dummy function for editing personalization, should link to actual route or state change
-  const handleEditPersonalization = () => {
-    console.log('Edit personalization clicked');
-  };
+  useEffect(() => {
+    const handleRotation = () => {
+      setSelectedLanguageIndex((prevIndex) =>
+        prevIndex === languages.length - 1 ? 0 : prevIndex + 1
+      );
+    };
+    
+    let intervalId;
 
-  // Dummy function for starting a conversation, should link to actual functionality
-  const handleStartConversation = () => {
-    console.log('Start conversation clicked');
+    if (languageButtonRef.current) {
+      languageButtonRef.current.addEventListener('mouseenter', () => {
+        intervalId = setInterval(handleRotation, 1000);
+      });
+      
+      languageButtonRef.current.addEventListener('mouseleave', () => {
+        clearInterval(intervalId);
+        setSelectedLanguageIndex(0);
+      });
+    }
+    
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, []);
+
+//   const handleStartConversation = () => {
+//     navigate(`/conversation/${languages[selectedLanguageIndex].toLowerCase()}`);
+//   };
+
+  const handleStartConversation = async () => {
+    const language = languages[selectedLanguageIndex].toLowerCase();
+  
+    try {
+      // Send the selected language to the server
+      const response = await axios.post('/api/v1/chat', { language });
+      console.log('Server response:', response.data);
+      // Navigate to the chat page after successfully sending the data
+      navigate('/conversation');
+    } catch (error) {
+      console.error('Starting conversation failed:', error);
+    }
   };
 
   return (
-    <Container component="main" maxWidth="xs" className={classes.root}>
-      <Paper elevation={3} className={classes.paper}>
-        <Typography component="h1" variant="h5">
-          Welcome, {name}
-        </Typography>
-        <Box my={2}>
-          <Typography component="p" variant="body1">
-            PROFICIENCY
-          </Typography>
-          <Typography component="p" variant="subtitle1">
-            {proficiency} in Spanish
-          </Typography>
-        </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.button}
-          onClick={handleStartConversation}
-        >
-          Start Conversation
-        </Button>
-        <Button
-          variant="outlined"
-          color="secondary"
-          className={classes.button}
-          onClick={handleEditPersonalization}
-        >
+    <FullScreenContainer>
+      <Typography variant="h3" gutterBottom>
+        Welcome, User
+      </Typography>
+      <LanguageButton ref={languageButtonRef} onClick={handleStartConversation}>
+        {languages.map((language, index) => (
+          <LanguageOption
+            key={language}
+            style={{
+              visibility: selectedLanguageIndex === index ? 'visible' : 'hidden',
+              opacity: selectedLanguageIndex === index ? 1 : 0,
+            }}
+          >
+            {language}
+          </LanguageOption>
+        ))}
+      </LanguageButton>
+      <Box sx={{ display: 'flex', flexDirection: 'row', mt: 4 }}>
+        <CustomButton variant="outlined" onClick={() => navigate('/form')}>
           Edit Personalization
-        </Button>
-      </Paper>
-    </Container>
+        </CustomButton>
+        <CustomButton variant="outlined" onClick={() => navigate('/proficiency')}>
+          Proficiency
+        </CustomButton>
+      </Box>
+    </FullScreenContainer>
   );
 }
 
