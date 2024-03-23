@@ -1,0 +1,64 @@
+/* Header.css */
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background-color: #fff; /* Adjust color as needed */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* subtle shadow for depth */
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 20px; /* Adjust size as needed */
+  width: 20px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.logo-large {
+  height: 65px; /* Adjust size as needed */
+  width: 65px;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+.version-info {
+  margin-left: 10px;
+  color: #666;
+  font-size: 8px;
+  color: #00a739;
+}
+
+.navigation ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navigation a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  margin-right: 10px;
+  color: #333;
+}
+
+.user-avatar img {
+  width: 40px; /* Adjust size as needed */
+  height: 40px;
+  border-radius: 50%; /* Circular avatar */
+}

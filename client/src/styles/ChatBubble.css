@@ -1,0 +1,53 @@
+/* ChatBubble.css */
+
+.chat-bubble {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+  padding: 10px;
+  margin: 10px 0;
+  position: relative;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.bot-bubble .timestamp {
+  font-size: 0.75rem;
+  text-align: left; /* Align timestamp text to the left */
+  align-self: flex-start; /* Align timestamp container to the start */
+  order: -1; /* Ensure timestamp is above the message text */
+  margin-bottom: 4px; /* Spacing between timestamp and message */
+}
+
+/* Ensure that the message text container in bot bubble is left-aligned */
+.bot-bubble .message-text {
+  text-align: left;
+}
+
+.bot-bubble {
+  align-self: flex-start;
+  text-align: left; /* Align text to the left */
+  position: relative; /* Position relative to allow absolute positioning of the logo */
+  max-width: 45%;
+}
+
+.bot-bubble .logo {
+  position: absolute;
+  left: 10px; /* Adjust based on the size of your logo */
+  top: 10px; /* Adjust based on your design preference */
+  width: 20px; /* Your logo width */
+  height: 20px; /* Your logo height */
+}
+
+/* User messages */
+.user-bubble {
+  align-self: flex-end;
+  color: #666;
+  text-align: right;
+}
+
+.user-bubble .timestamp {
+  font-size: 0.75rem;
+  color: #666;
+  align-self: flex-end;
+}

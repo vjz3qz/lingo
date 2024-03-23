@@ -1,0 +1,226 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.features-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* This adds space between the boxes */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .features-container {
+    flex-direction: column;
+  }
+
+  .feature-box {
+    width: 80%; /* Adjust the width for mobile view */
+    margin-bottom: 20px;
+  }
+}
+
+.feature-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Add this at the bottom of your Home.css file */
+
+/* Style for the container of the action buttons and chat bar */
+.bottom-container {
+  bottom: 0;
+  left: 50%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  padding-top: 50px;
+  z-index: 1000;
+}
+
+.bottom-container.full-width {
+  width: 100%;
+}
+
+.bottom-container.half-width {
+  width: 50%;
+  transform: translateX(50%);
+}
+
+/* Style for action buttons */
+.action-buttons {
+  display: flex;
+  gap: 10px; /* Adjust the space between buttons */
+  margin-bottom: 20px; /* Space between buttons and chat bar */
+  justify-content: left; /* Center the buttons horizontally */
+}
+
+/* Individual action button style */
+.action-button-white {
+  padding: 5px 10px; /* Reduced padding for smaller buttons */
+  font-size: 0.8em; /* Smaller font size */
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  /* Add any additional styling such as hover effects, font styling, etc. */
+}
+
+.action-button-black {
+  padding: 5px 10px; /* Reduced padding for smaller buttons */
+  font-size: 0.8em; /* Smaller font size */
+  border: 1px solid #ddd;
+  background-color: #919191;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white; /* Setting font color to white */
+  /* Add any additional styling such as hover effects, font styling, etc. */
+}
+
+.action-button-white.disabled,
+.action-button-black.disabled {
+  /* Styles for disabled state, e.g., lower opacity, greyed out, etc. */
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Style for chat bar */
+.chat-bar {
+  width: 100%; /* Make chat bar wider */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* This spaces out the input and button */
+}
+
+/* Style for the chat input field */
+.chat-input {
+  flex-grow: 1; /* Allows the input to grow and fill the space */
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+/* Style for the chat send button */
+.chat-send-button {
+  padding: 10px 15px;
+  background-color: #000; /* Assuming a black send button */
+  color: #fff; /* Text color for the send button */
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.fade-out {
+  opacity: 0.5; /* Adjust the opacity level as needed */
+  pointer-events: none; /* Make faded out elements non-interactive */
+}
+
+.hide-elements {
+  animation: fadeOut 2s forwards; /* Animation name, duration, fill mode */
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    display: none;
+  }
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align to the left for the default case (bot messages) */
+  margin: 0 auto;
+  padding: 10px;
+  overflow-y: auto;
+  position: relative;
+  margin-bottom: 100px; /* Provide enough space for the input area */
+}
+
+.chat-container.full-width {
+  width: 90%;
+}
+
+.chat-container.half-width {
+  width: 50%;
+}
+
+.chat-container::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+.chat-bubble {
+  position: absolute;
+  bottom: 10px; /* Adjust as needed */
+  padding: 10px;
+  border-radius: 8px;
+  margin: 0 10px; /* Give some space on the sides */
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container {
+  display: flex;
+}
+
+.chat-container {
+  /* Adjust the width to leave space for the side panel */
+  width: calc(
+    100% - 300px
+  ); /* This should be the rest of the space minus the side panel width */
+  transition: width 0.3s; /* Optional: animate the width change */
+}
+
+/* You might need to adjust styles when the side panel is visible */
+.app-container.chat-active .chat-container {
+  width: calc(100% - 300px); /* Subtract the width of the side panel */
+}
+
+.with-side-panel .main-content {
+  margin-right: 400px; /* Width of the side panel */
+}
+
+.side-panel {
+  /* ... existing styles ... */
+  width: 400px; /* Set the width of your side panel */
+  /* Add other styles for the side panel */
+}
+
+/* Styles for the container that includes both the DocumentViewer and Chat */
+.main-container {
+  display: flex;
+  height: 100vh; /* Adjust if needed */
+  justify-content: space-between;
+  gap: 20px; /* Adjust the space between the two components */
+}
+
+.main-container > * {
+  flex: 1; /* This makes both children (DocumentViewer and Chat) take equal width */
+  /* You can adjust this as needed, e.g., flex: 2 for one and flex: 1 for the other */
+}
+
+/* Assuming .chat-component wraps around .main-content and .bottom-container */
+.chat-component {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 30px); /* Subtract header height from 100vh */
+  width: 100%; /* Full width */
+  justify-content: flex-end; /* Align children to the bottom */
+}
+
+/* This should be the chat messages container, allowing it to scroll */
+.main-content {
+  overflow-y: auto; /* To allow scrolling for chat messages */
+  flex-grow: 1; /* Grow to use all available space */
+  align-items: center;
+  margin-top: 80px; /* Adjust if you have a header */
+  text-align: center;
+}
