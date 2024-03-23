@@ -28,7 +28,7 @@ def init_db(supabase_url, supabase_key):
 db_client = init_db(supabase_url, supabase_key)
 
 
-def create_user(name, previous_knowledge, interests):
+def create_user_in_db(name, previous_knowledge, interests):
     """
     Create a new user in the database
     """
@@ -40,32 +40,34 @@ def create_user(name, previous_knowledge, interests):
         "previous_knowledge": previous_knowledge,
         "interests": interests
     }
-    response = db_client.table("users").insert(user_data).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to create user: {response['error']}")
-    else:
+    try:
+        data, count = db_client.table("users").insert(user_data).execute()
         logging.info(f"User {name} created successfully")
+    except:
+        logging.error(f"Failed to create user: {data, count}")
 
 
-def update_user(user_id, name, previous_knowledge, interests):
+def update_user_in_db(user_id, name, previous_knowledge, interests):
     """
     Update an existing user in the database
     """
     logging.info(f"Updating user: {user_id}")
-    
+    # Check if user exists
+    data, count = db_client.table("users").select("*").eq("id", user_id).execute()
+    if not data:
+        logging.error(f"User {user_id} does not exist")
+        return
     # Upload user data to Supabase
     user_data = {
         "name": name,
         "previous_knowledge": previous_knowledge,
         "interests": interests
     }
-    response = db_client.table("users").update(user_data).eq("name", user_id).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to update user: {response['error']}")
-    else:
+    try:
+        data, count = db_client.table("users").update(user_data).eq("id", user_id).execute()
         logging.info(f"User {user_id} updated successfully")
+    except:
+        logging.error(f"Failed to update user: {data, count}")
 
 
 def create_proficiency_record(user_id, language, proficiency_level, feedback):
