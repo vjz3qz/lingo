@@ -1,23 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Button, Box } from '@mui/material';
+import { Container, Typography, Button, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 function HomePage() {
   const navigate = useNavigate();
   const [name, setName] = useState('User'); // Replace 'User' with actual user name
-  const [proficiency, setProficiency] = useState('Beginner'); // Replace 'Beginner' with actual proficiency
+  const [selectedLanguage, setSelectedLanguage] = useState('Spanish'); // Default selected language
+  const [proficiencyLevels, setProficiencyLevels] = useState({
+    Spanish: 'Beginner',
+    German: 'Intermediate',
+    French: 'Advanced'
+    // Populate this object with actual data from your backend or state management
+  });
 
-  useEffect(() => {
-    // Fetch and set the user's name and proficiency here
-  }, []);
+  const handleLanguageChange = (event) => {
+    setSelectedLanguage(event.target.value);
+  };
 
   const handleStartConversation = () => {
-    // Logic for starting a conversation
     console.log('Start conversation');
   };
 
   const handleEditPersonalization = () => {
-    navigate('/'); // Navigate to the Form page which is your root URL
+    navigate('/form'); // Navigate to the Form page which is your root URL
   };
 
   return (
@@ -26,23 +31,36 @@ function HomePage() {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      height: '100vh', // Use the full screen height
-      textAlign: 'center', // Center text horizontally
+      height: '100vh',
+      textAlign: 'center',
     }}>
       <Typography variant="h3" component="h1" gutterBottom>
         Welcome, {name}
       </Typography>
-      <Typography variant="subtitle1" gutterBottom>
-        Your Current Proficiency
-      </Typography>
-      <Typography variant="h5" gutterBottom sx={{ mb: 4 }}>
-        {proficiency} in Spanish
-      </Typography>
+      <Box sx={{ mb: 4 }}>
+        <FormControl fullWidth>
+          <InputLabel id="language-select-label">Select a Language</InputLabel>
+          <Select
+            labelId="language-select-label"
+            value={selectedLanguage}
+            label="Select a Language"
+            onChange={handleLanguageChange}
+            sx={{ mb: 2 }}
+          >
+            <MenuItem value="Spanish">Spanish</MenuItem>
+            <MenuItem value="German">German</MenuItem>
+            <MenuItem value="French">French</MenuItem>
+          </Select>
+        </FormControl>
+        <Typography variant="h6" gutterBottom>
+          Your Proficiency: {proficiencyLevels[selectedLanguage]}
+        </Typography>
+      </Box>
       <Button
         variant="contained"
         color="primary"
         onClick={handleStartConversation}
-        sx={{ mb: 2, width: '100%' }} // Full width button
+        sx={{ mb: 2, width: '100%' }}
       >
         Start Conversation
       </Button>
@@ -50,7 +68,7 @@ function HomePage() {
         variant="outlined"
         color="secondary"
         onClick={handleEditPersonalization}
-        sx={{ width: '100%' }} // Full width button
+        sx={{ width: '100%' }}
       >
         Edit Personalization
       </Button>
