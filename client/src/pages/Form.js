@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
-import { Container, TextField, Button, Select, MenuItem, InputLabel, FormControl, Typography } from '@mui/material';
+import React, { useState } from "react";
+import {
+  Container,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Typography,
+} from "@mui/material";
 
 function LanguageLearningForm() {
   const [form, setForm] = useState({
-    name: '',
-    language: '',
-    reason: '',
-    previousKnowledge: '',
-    interests: '',
-
+    name: "",
+    language: "",
+    reason: "",
+    previousKnowledge: "",
+    interests: "",
   });
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setForm(prevForm => ({
+    setForm((prevForm) => ({
       ...prevForm,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -24,8 +32,8 @@ function LanguageLearningForm() {
     // Here you would send the form data to your backend
     // For now, let's just log it to the console
     console.log(form);
-    
-    const endpoint = '/chat';
+
+    // const endpoint = '/chat';
   };
 
   return (
@@ -43,10 +51,12 @@ function LanguageLearningForm() {
           onChange={handleChange}
           margin="normal"
         />
-        
+
         {/* Language Selector */}
         <FormControl fullWidth margin="normal">
-          <InputLabel id="language-selector-label">Select the language you are trying to learn</InputLabel>
+          <InputLabel id="language-selector-label">
+            Select the language you are trying to learn
+          </InputLabel>
           <Select
             labelId="language-selector-label"
             name="language"
@@ -57,7 +67,7 @@ function LanguageLearningForm() {
             {/* Add more languages here */}
           </Select>
         </FormControl>
-        
+
         {/* Reason for Learning */}
         <TextField
           fullWidth
@@ -67,7 +77,7 @@ function LanguageLearningForm() {
           onChange={handleChange}
           margin="normal"
         />
-        
+
         {/* Previous Language Knowledge */}
         <TextField
           fullWidth
@@ -77,7 +87,7 @@ function LanguageLearningForm() {
           onChange={handleChange}
           margin="normal"
         />
-        
+
         {/* Interests */}
         <TextField
           fullWidth
@@ -87,9 +97,14 @@ function LanguageLearningForm() {
           onChange={handleChange}
           margin="normal"
         />
-        
+
         {/* Submit Button */}
-        <Button variant="contained" color="primary" type="submit" style={{ marginTop: '20px' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          style={{ marginTop: "20px" }}
+        >
           Submit Profile
         </Button>
       </form>
