@@ -86,18 +86,27 @@ function LanguageLearningForm() {
 
   return (
     <Container maxWidth="sm">
-      <Box
-        sx={{
-          bgcolor: "background.paper",
-          p: 4,
-          borderRadius: 2,
-          boxShadow: 1,
-          mt: 2,
-          mb: 3,
-        }}
-      >
-        <Typography variant="h4" component="h1" gutterBottom>
-          Language Learning Profile
+        <Box
+            sx={{
+                bgcolor: "background.paper",
+                p: 4,
+                borderRadius: 2,
+                boxShadow: 1,
+                mt: 2,
+                mb: 3,
+            }}
+        >
+        <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            align="center" // Centers the text
+            sx={{
+                fontFamily: 'Roboto, sans-serif', // Apply the font family (this is already the default for Material-UI)
+                fontWeight: 500, // Adjust the font weight as needed
+            }}
+        >
+            Language Learning Profile
         </Typography>
         <form onSubmit={handleSubmit}>
             {/* Conditional Alert for displaying general error messages */}
@@ -116,7 +125,7 @@ function LanguageLearningForm() {
             variant="outlined"
             error={errors.name}
             helperText={errors.name && "This field is required."}
-            sx={{ marginBottom: 2 }}
+            sx={{ fontFamily: 'Roboto, sans-serif', marginBottom: 2 }}
           />
 
           <TextField
@@ -131,38 +140,39 @@ function LanguageLearningForm() {
             rows={1}
             error={errors.previous_knowledge}
             helperText={errors.previous_knowledge && "This field is required."}
-            sx={{ backgroundColor: "#fff", marginBottom: 2 }}
+            sx={{ fontFamily: 'Roboto, sans-serif', backgroundColor: "#fff", marginBottom: 2 }}
           />
 
-          <TextField
-            fullWidth
-            label="List any of your interests."
-            name="interests"
-            value={form.interests}
-            onChange={handleChange}
-            margin="normal"
-            variant="outlined"
-            multiline
-            rows={5}
-            error={errors.interests}
-            helperText={errors.interests && "This field is required."}
-            sx={{ backgroundColor: "#fff", marginBottom: 2 }}
-          />
+            <TextField
+                fullWidth
+                label="List any of your interests."
+                name="interests"
+                value={form.interests}
+                onChange={handleChange}
+                margin="normal"
+                variant="outlined"
+                multiline
+                rows={5}
+                error={errors.interests}
+                helperText={errors.interests && "This field is required."}
+                sx={{ fontFamily: 'Roboto, sans-serif', backgroundColor: "#fff", marginBottom: 2 }}
+            />
 
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{
-              marginTop: 2,
-              bgcolor: "primary.main",
-              "&:hover": {
-                bgcolor: "primary.dark",
-              },
-            }}
-          >
-            Submit Profile
-          </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    sx={{
+                    bgcolor: "primary.main",
+                    "&:hover": {
+                        bgcolor: "primary.dark",
+                    },
+                    }}
+                >
+                    Submit Profile
+                </Button>
+            </Box>
         </form>
       </Box>
     </Container>
