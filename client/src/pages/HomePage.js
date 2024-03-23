@@ -1,82 +1,77 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CssBaseline, Typography, Button, Box } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Box, Typography, Button, styled } from '@mui/material';
 
-const FullHeightContainer = styled('div')(({ theme }) => ({
+const FullScreenContainer = styled(Box)({
   height: '100vh',
+  width: '100vw',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: '#3f51b5', // Or any other pleasant blue shade
-  color: theme.palette.getContrastText('#3f51b5'),
+  backgroundColor: '#fff', // White background for a clean look
+  color: '#333', // Darker text for contrast
   textAlign: 'center',
-}));
+  padding: '20px',
+});
 
 const CustomButton = styled(Button)({
-  fontWeight: 'bold',
+  fontWeight: 600,
+  borderRadius: '20px', // Softly rounded corners for a modern feel
+  textTransform: 'none',
+  padding: '12px 36px',
+  fontSize: '1.1rem', // Slightly larger font size
   margin: '10px',
-  padding: '10px 30px',
-  fontSize: '1rem',
-  letterSpacing: '0.1rem',
-  transition: 'transform 0.2s ease-in-out',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // Subtle shadow for depth
   '&:hover': {
-    transform: 'scale(1.05)',
-    boxShadow: '0px 3px 15px rgba(0,0,0,0.2)',
-  }
+    boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+  },
+  '&.MuiButton-contained': {
+    backgroundColor: '#e0e0e0', // Light grey for a soft appearance
+    color: '#333',
+  },
+});
+
+const ActionButtonGroup = styled(Box)({
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '20px',
+  marginTop: '20px',
 });
 
 function HomePage() {
   const navigate = useNavigate();
-
-  const [name, setName] = useState('User'); // Replace 'User' with actual user name
+  const [name, setName] = useState('User'); // Replace 'User' with the actual user name from auth
 
   const handleStartConversation = () => {
-    // Logic to start a conversation
-    console.log('Start conversation');
+    navigate('/conversation'); // Replace with actual route
   };
 
   const handleEditPersonalization = () => {
-    navigate('/form'); // Navigate to the Form page
+    navigate('/form'); // Replace with actual route
   };
 
   const handleProficiency = () => {
-    navigate('/proficiency'); // Navigate to the Proficiency page
+    navigate('/proficiency'); // Replace with actual route
   };
 
   return (
-    <>
-      <CssBaseline /> {/* Resets the margin and padding */}
-      <FullHeightContainer>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-          Welcome, {name}
-        </Typography>
-        <Box sx={{ my: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-          <CustomButton
-            variant="contained"
-            color="primary"
-            onClick={handleStartConversation}
-          >
-            Start Conversation
-          </CustomButton>
-          <CustomButton
-            variant="outlined"
-            onClick={handleEditPersonalization}
-            sx={{ borderColor: '#ffffff', color: '#ffffff', mt: 1 }}
-          >
-            Edit Personalization
-          </CustomButton>
-          <CustomButton
-            variant="contained"
-            onClick={handleProficiency}
-            sx={{ backgroundColor: '#f50057', mt: 1 }}
-          >
-            Proficiency
-          </CustomButton>
-        </Box>
-      </FullHeightContainer>
-    </>
+    <FullScreenContainer>
+      <Typography variant="h4" sx={{ fontWeight: '700', mb: 2 }}>
+        Welcome, {name}
+      </Typography>
+      <CustomButton variant="contained" onClick={handleStartConversation} sx={{ maxWidth: '300px', width: '100%' }}>
+        Start Conversation
+      </CustomButton>
+      <ActionButtonGroup>
+        <CustomButton variant="outlined" onClick={handleEditPersonalization}>
+          Edit Personalization
+        </CustomButton>
+        <CustomButton variant="outlined" onClick={handleProficiency}>
+          Proficiency
+        </CustomButton>
+      </ActionButtonGroup>
+    </FullScreenContainer>
   );
 }
 
