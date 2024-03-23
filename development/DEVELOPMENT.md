@@ -18,6 +18,7 @@ Use python or python3 according to your setup. Test server API at `http://127.0.
 ## React/Flask Production Build
 
 ```console
+$ npm install --prefix client
 $ npm run build --prefix client
 $ pipenv install && pipenv shell
 $ gunicorn --chdir server app:app
