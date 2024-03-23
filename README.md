@@ -2,6 +2,13 @@
 
 Have a conversation with our AI and get instant feedback on the language you are learning.
 
+## Tech Stack
+
+- **Frontend**: React, Material-UI, Axios
+- **Backend**: Flask, Gunicorn, LangChain
+- **Database**: Supabase (Postgres)
+- **Deployment**: Render.com
+
 ## UI Flow
 
 ![UI Flow](development/ui-flow.png)
@@ -96,3 +103,25 @@ Have a conversation with our AI and get instant feedback on the language you are
   "user_id": "string"
 }
 ```
+
+## Database Schema
+
+### Users (users)
+
+| Column Name        | Data Type | Constraints |
+| ------------------ | --------- | ----------- |
+| id                 | UUID      | PRIMARY KEY |
+| name               | TEXT      | NOT NULL    |
+| previous_knowledge | TEXT      | NOT NULL    |
+| interests          | TEXT      | NOT NULL    |
+
+### Previous Proficiency Feedback (previous_proficiency_feedback)
+
+| Column Name       | Data Type | Constraints |
+| ----------------- | --------- | ----------- |
+| id                | UUID      | PRIMARY KEY |
+| timestamp         | TIMESTAMP | NOT NULL    |
+| user_id           | UUID      | FOREIGN KEY |
+| language          | TEXT      | NOT NULL    |
+| proficiency_level | INT       | NOT NULL    |
+| feedback          | TEXT      | NOT NULL    |
