@@ -3,7 +3,7 @@ from flask_cors import CORS
 from application.api.v1 import v1 as v1_blueprint
 import logging
 from application.services.database_service import db_client
-from application.services.nlp_service import (embeddings, chat_model, llm)
+from application.services.nlp_service import chat_model
 from dotenv import load_dotenv
 from flask import send_from_directory
 import os
