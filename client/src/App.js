@@ -8,7 +8,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Form />} />
+        <Route path="/form" element={<Form />} />
         {/* <Route path="/home" element={<HomePage />} /> */}
         <Route path="/chat" element = {<ChatWrapper />} />
       </Routes>
