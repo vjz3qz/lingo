@@ -1,9 +1,9 @@
 // Chat.js
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import ChatBubble from "../ui/ChatBubble";
 import ChatInputBar from "../subcomponents/ChatInputBar";
-import axios from "axios";
+// import axios from "axios";
 
 const Chat = ({ user }) => {
   // State Declarations
@@ -11,7 +11,6 @@ const Chat = ({ user }) => {
     { text: "Hello!", isUserMessage: false },
     { text: "How can I help you today?", isUserMessage: false },
   ]);
-  const [showChat, setShowChat] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
   // Message Handling Functions

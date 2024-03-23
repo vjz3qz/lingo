@@ -25,4 +25,4 @@ def init_db(supabase_url, supabase_key):
     return supabase
 
 
-vector_db = init_db(supabase_url, supabase_key)
+db_client = init_db(supabase_url, supabase_key)
