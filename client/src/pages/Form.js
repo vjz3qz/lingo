@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Select, MenuItem, InputLabel, FormControl, Typography, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function LanguageLearningForm() {
   const [form, setForm] = useState({
     name: '',
-    previousKnowledge: '',
+    previous_knowledge: '',
     interests: '',
-
   });
 
   const navigate = useNavigate();
@@ -21,11 +22,35 @@ function LanguageLearningForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // Here you would send the form data to your backend
-    // For now, let's just log it to the console
-    console.log(form);
+    const endpoint = '/api/v1/chat';
     
-    const endpoint = '/chat';
+    try {
+      // Axios automatically stringifies the body and sets the content-type header
+    //   const response = await axios.post(endpoint, form);
+
+    //   // Axios response has the data property where the server response is contained
+    //   console.log('Server response:', response.data);
+
+    const response = { status: 200 };
+  
+    if (response.status === 200) {
+    navigate('/home');
+    } else {
+    console.error('HTTP error:', response.status);
+    }
+    } catch (error) {
+      console.error('Submitting form failed:', error);
+      if (error.response) {
+        // The server responded with a status code that falls out of the range of 2xx
+        console.error('Server response error:', error.response.status);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error message:', error.message);
+      }
+    }
   };
 
   return (
@@ -72,7 +97,7 @@ function LanguageLearningForm() {
             fullWidth
             label="Specify any previous language knowledge."
             name="previousKnowledge"
-            value={form.previousKnowledge}
+            value={form.previous_knowledge}
             onChange={handleChange}
             margin="normal"
             variant="outlined"
