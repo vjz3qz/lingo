@@ -18,7 +18,8 @@ def get_chat_response(conversation_history, user_id, language):
 
                     If there is no conversation history, start a conversation with {name} about their interests.
                     If there is conversation history, continue the conversation with {name}.
-                    Your response:"""
+                    Your response:
+                    """
     
     chat_prompt = ChatPromptTemplate.from_template(template)
     response = chat(chat_prompt.format_messages(
@@ -42,7 +43,9 @@ def analyze_proficiency(conversation_history, user_id, language):
                     {conversation_history}
 
                     Analyze {name}'s proficiency in {language} based on the conversation history, providing 
-                    insightful and constructive feedback and an updated proficiency score.
+                    insightful and constructive feedback and an updated proficiency score. The updated proficiency 
+                    score should be an integer. If there was no previous proficiency score, provide a proficiency 
+                    score based on the conversation history, starting from 0.
 
                     Your response should be in the following format:
                     Proficiency Score: [score]
