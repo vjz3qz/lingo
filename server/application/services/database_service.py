@@ -48,6 +48,26 @@ def create_user(name, previous_knowledge, interests):
         logging.info(f"User {name} created successfully")
 
 
+def update_user(user_id, name, previous_knowledge, interests):
+    """
+    Update an existing user in the database
+    """
+    logging.info(f"Updating user: {user_id}")
+    
+    # Upload user data to Supabase
+    user_data = {
+        "name": name,
+        "previous_knowledge": previous_knowledge,
+        "interests": interests
+    }
+    response = db_client.table("users").update(user_data).eq("name", user_id).execute()
+    
+    if response["error"]:
+        logging.error(f"Failed to update user: {response['error']}")
+    else:
+        logging.info(f"User {user_id} updated successfully")
+
+
 def create_proficiency_record(user_id, language, proficiency_level, feedback):
     """
     Create a new proficiency record in the database
