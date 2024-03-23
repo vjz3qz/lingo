@@ -1,10 +1,10 @@
 import React from "react";
-import Home from "./pages/Home";
+import ChatWrapper from "./pages/ChatWrapper";
 
 function App() {
   return (
     <div className="content-wrapper">
-      <Home />
+      <ChatWrapper />
     </div>
   );
 }
