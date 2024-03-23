@@ -43,8 +43,10 @@ def create_user_in_db(name, previous_knowledge, interests):
     try:
         data, count = db_client.table("users").insert(user_data).execute()
         logging.info(f"User {name} created successfully")
+        return 200
     except:
         logging.error(f"Failed to create user: {data, count}")
+        return 500
 
 
 def update_user_in_db(user_id, name, previous_knowledge, interests):
@@ -56,7 +58,7 @@ def update_user_in_db(user_id, name, previous_knowledge, interests):
     data, count = db_client.table("users").select("*").eq("id", user_id).execute()
     if not data:
         logging.error(f"User {user_id} does not exist")
-        return
+        return 400
     # Upload user data to Supabase
     user_data = {
         "name": name,
@@ -66,8 +68,10 @@ def update_user_in_db(user_id, name, previous_knowledge, interests):
     try:
         data, count = db_client.table("users").update(user_data).eq("id", user_id).execute()
         logging.info(f"User {user_id} updated successfully")
+        return 200
     except:
         logging.error(f"Failed to update user: {data, count}")
+        return 500
 
 
 def create_proficiency_record(user_id, language, proficiency_level, feedback):

@@ -10,6 +10,7 @@ from application.services.database_service import create_user_in_db, update_user
 
 from flask import jsonify, request
 import os
+from flask import abort
 
 
 # create user endpoint
@@ -20,14 +21,26 @@ def create_user():
 
     # Extract user ID and user data from request body
     name = data.get("user_id", "")
+    if not name:
+        return jsonify({"message": "User ID is required"}), 400
     previous_knowledge = data.get("previous_knowledge", "")
+    if not previous_knowledge:
+        return jsonify({"message": "Previous knowledge is required"}), 400
     interests = data.get("interests", "")
+    if not interests:
+        return jsonify({"message": "Interests are required"}), 400
 
     # Call create user function
-    create_user_in_db(name, previous_knowledge, interests)
-
-    # Return success response
-    return jsonify({"message": "User created successfully"})
+    status = create_user_in_db(name, previous_knowledge, interests)
+    if status == 200:
+        # Return success response
+        return jsonify({"message": "User created successfully"}), 200
+    elif status == 500:
+        # Return failure response
+        return jsonify({"message": "Failed to create user"}), 500
+    else:
+        # Return generic error response
+        abort(500)
 
 
 # update user endpoint
@@ -38,15 +51,32 @@ def update_user():
 
     # Extract user ID and user data from request body
     user_id = data.get("user_id", "")
+    if not user_id:
+        return jsonify({"message": "User ID is required"}), 400
     name = data.get("name", "")
+    if not name:
+        return jsonify({"message": "Name is required"}), 400
     previous_knowledge = data.get("previous_knowledge", "")
+    if not previous_knowledge:
+        return jsonify({"message": "Previous knowledge is required"}), 400
     interests = data.get("interests", "")
+    if not interests:
+        return jsonify({"message": "Interests are required"}), 400
 
     # Call update user function
-    update_user_in_db(user_id, name, previous_knowledge, interests)
-
-    # Return success response
-    return jsonify({"message": "User updated successfully"})
+    status = update_user_in_db(user_id, name, previous_knowledge, interests)
+    if status == 200:
+        # Return success response
+        return jsonify({"message": "User updated successfully"}), 200
+    elif status == 500:
+        # Return failure response
+        return jsonify({"message": "Failed to update user"}), 500
+    elif status == 400:
+        # Return user not found response
+        return jsonify({"message": "User not found"}), 400
+    else:
+        # Return generic error response
+        abort(500)
 
 
 @v1.route("/get-user/<user_id>", methods=["GET"])
