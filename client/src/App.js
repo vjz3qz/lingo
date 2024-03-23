@@ -4,6 +4,8 @@ import HomePage from './pages/HomePage';
 import ChatWrapper from "./pages/ChatWrapper";
 import Form from './pages/Form';
 import Login from './pages/Login';
+import Proficiency from './pages/Proficiency';
+
 
 function App() {
   return (
