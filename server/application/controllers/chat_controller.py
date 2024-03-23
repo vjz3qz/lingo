@@ -2,11 +2,13 @@ from langchain.chat_models import ChatOpenAI
 from langchain.prompts.chat import ChatPromptTemplate, HumanMessagePromptTemplate
 from application.services.database_service import db_client, get_user_data, get_user_proficiency, get_user_last_proficiency_by_language, create_proficiency_record
 from application.services.nlp_service import chat_model
+from application.utils.parse_conversation import parse_conversation
 import logging
 
 
 
 def get_chat_response(conversation_history, user_id, language):
+    conversation_history = parse_conversation(conversation_history)
     name, interests = get_user_data(user_id)
     previous_proficiency_score, previous_proficiency_feedback = get_user_proficiency(user_id, language)
     template = """You are a language expert in {language} who is doing having a conversation with, {name}. 
@@ -33,6 +35,7 @@ def get_chat_response(conversation_history, user_id, language):
 
 
 def analyze_proficiency(conversation_history, user_id, language):
+    conversation_history = parse_conversation(conversation_history)
     name, interests = get_user_data(user_id)
     previous_proficiency_score, previous_proficiency_feedback = get_user_last_proficiency_by_language(user_id, language)
     template = """You are a language expert in {language} who finished having a conversation with, {name}.
