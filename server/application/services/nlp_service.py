@@ -1,8 +1,6 @@
 import os
 import logging
-from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
-from langchain_openai import OpenAI
 
 
 # Environment setup
