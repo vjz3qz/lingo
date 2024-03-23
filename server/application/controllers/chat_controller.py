@@ -2,7 +2,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.runnables import RunnableParallel
 from langchain.prompts import PromptTemplate
-from application.services.database_service import db_client, get_user_data
+# from application.services.database_service import db_client, get_user_data
 from application.services.nlp_service import embeddings, chat_model
 import logging
 

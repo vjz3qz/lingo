@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
-import { Container, TextField, Button, Select, MenuItem, InputLabel, FormControl, Typography, Box } from '@mui/material';
+import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function LanguageLearningForm() {
   const [form, setForm] = useState({
     name: '',
-    previousKnowledge: '',
+    previous_knowledge: '',
     interests: '',
+  });
 
+  const [errors, setErrors] = useState({
+    name: false,
+    previous_knowledge: false,
+    interests: false,
   });
 
   const navigate = useNavigate();
@@ -19,41 +24,47 @@ function LanguageLearningForm() {
       ...prevForm,
       [name]: value
     }));
+    // Also clear error state upon change
+    if (errors[name]) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [name]: false
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    let isFormValid = true;
+    Object.keys(form).forEach(key => {
+      if (!form[key].trim()) {
+        newErrors[key] = true;
+        isFormValid = false;
+      }
+    });
+    setErrors(newErrors);
+    return isFormValid;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const endpoint = '/api/v1/chat';
-    
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Include other headers as required, e.g., authorization tokens
-        },
-        body: JSON.stringify(form),
-      });
+    if (!validateForm()){
+        return
+    };
 
-    // const responseBody = await response.json(); // Make sure the server sends back JSON
-    // console.log('Server response:', responseBody);
-  
-      if (response.ok) {
-        navigate('/home');
-      } else {
-        console.error('HTTP error:', response.status);
-      }
+    try {
+      const response = await axios.post('/api/v1/chat', form);
+      console.log('Server response:', response.data);
+      navigate('/home');
     } catch (error) {
       console.error('Submitting form failed:', error);
     }
-    // navigate('/home');
-    
   };
 
   return (
     <Container maxWidth="sm">
       <Box sx={{
-        bgcolor: 'background.paper', // or any light shade color
+        bgcolor: 'background.paper',
         p: 4,
         borderRadius: 2,
         boxShadow: 1,
@@ -64,7 +75,6 @@ function LanguageLearningForm() {
           Language Learning Profile
         </Typography>
         <form onSubmit={handleSubmit}>
-          {/* Name Field */}
           <TextField
             fullWidth
             label="What should we call you?"
@@ -73,38 +83,26 @@ function LanguageLearningForm() {
             onChange={handleChange}
             margin="normal"
             variant="outlined"
-            sx={{
-              marginBottom: 2,
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: 'rgba(0, 0, 0, 0.23)', // default border color
-                },
-                '&:hover fieldset': {
-                  borderColor: 'primary.main', // border color on hover
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: 'primary.main', // border color when focused
-                },
-              },
-            }}
+            error={errors.name}
+            helperText={errors.name && "This field is required."}
+            sx={{ marginBottom: 2 }}
           />
 
-         {/* Previous Language Knowledge */}
-         <TextField
+          <TextField
             fullWidth
             label="Specify any previous language knowledge."
-            name="previousKnowledge"
-            value={form.previousKnowledge}
+            name="previous_knowledge"
+            value={form.previous_knowledge}
             onChange={handleChange}
             margin="normal"
             variant="outlined"
             multiline
-            rows={1} // Adjust the number of rows as needed for this field
+            rows={1}
+            error={errors.previous_knowledge}
+            helperText={errors.previous_knowledge && "This field is required."}
             sx={{ backgroundColor: '#fff', marginBottom: 2 }}
           />
 
-          
-          {/* Interests */}
           <TextField
             fullWidth
             label="List any of your interests."
@@ -114,11 +112,12 @@ function LanguageLearningForm() {
             margin="normal"
             variant="outlined"
             multiline
-            rows={4} // Increased size for this field to accommodate more text
+            rows={5}
+            error={errors.interests}
+            helperText={errors.interests && "This field is required."}
             sx={{ backgroundColor: '#fff', marginBottom: 2 }}
           />
 
-          {/* Submit Button */}
           <Button
             variant="contained"
             color="primary"
