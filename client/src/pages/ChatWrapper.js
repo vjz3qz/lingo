@@ -1,6 +1,6 @@
 // ChatWrapper.js
 
-import React, { useState } from "react";
+import React from "react";
 import "../styles/Home.css";
 import Header from "../ui/Header";
 import Chat from "../components/Chat";
