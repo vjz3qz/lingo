@@ -1,23 +1,17 @@
 from . import v1
 
 import logging
+
+from flask import current_app, request, abort, make_response, jsonify
+import os
+from werkzeug.utils import secure_filename
+
 from application.controllers.chat_controller import (
     get_chat_response,
     analyze_proficiency,
 )
-
 from application.services.database_service import update_user_in_db, get_user_data, db_client
-
-from flask import Blueprint, request, abort, make_response, jsonify
-import os
-from flask import abort
-from werkzeug.utils import secure_filename
 from application.services.nlp_service import transcribe_audio
-from flask import current_app
-
-
-v1 = Blueprint('v1', __name__)
-
 
 @v1.route("/health", methods=["GET"])
 def health():
@@ -99,7 +93,6 @@ def get_user():
 # chat endpoint
 @v1.route("/chat", methods=["POST"])
 def chat():
-    app.logger.debug("Received chat request")  # Add this line
 
     # Extract the token from the Authorization header
     token = request.headers.get('Authorization')
