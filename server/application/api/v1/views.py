@@ -18,6 +18,11 @@ from flask import current_app
 
 v1 = Blueprint('v1', __name__)
 
+
+@v1.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"}), 200
+
 # update user endpoint
 @v1.route("/update-user", methods=["POST"])
 def update_user():
