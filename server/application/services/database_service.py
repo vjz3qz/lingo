@@ -83,8 +83,17 @@ def get_user_data(user_id):
     logging.info(f"Getting user data for user: {user_id}")
     try:
         # Query user data from Supabase
-        data, count = db_client.table("users").select("*").eq("name", user_id).execute()
-        # TODO: parse response
+        data, count = db_client.table("users").select("*").eq("id", user_id).execute()
+        data = data[1]
+        count = count[1]
+        if count == 1:
+            user_data = data[0]
+            name = user_data["name"]
+            previous_knowledge = user_data["previous_knowledge"]
+            interests = user_data["interests"]
+            return name, previous_knowledge, interests
+        else:
+            return None, None, None
     except Exception as e:
         logging.error(f"Failed to get user data: {e}")
         return None, None, None
@@ -98,7 +107,16 @@ def get_user_last_proficiency_by_language(user_id, language):
     try:
         # Query proficiency records from Supabase
         data, count = db_client.table("previous_proficiency_feedback").select("*").eq("user_id", user_id).execute()
+        data = data[1]
+        count = count[1]
         # TODO return latest record
+        if count is not None and count > 0:
+            proficiency_record = data[0]
+            proficiency_level = proficiency_record["proficiency_level"]
+            feedback = proficiency_record["feedback"]
+            return proficiency_level, feedback
+        else:
+            return None, None
     except Exception as e:
         logging.error(f"Failed to get last proficiency record: {e}")
         return None, None
@@ -111,9 +129,11 @@ def get_user_proficiency_scores_by_language(user_id, language):
     try:
         # Query proficiency records from Supabase
         data, count = db_client.table("previous_proficiency_feedback").select("proficiency_level", "feedback").eq("user_id", user_id).eq("language", language).execute()
+        data = data[1]
+        count = count[1]
         print(data) # TODO check when there is data
         proficiency_scores = []
-        for record in data[1]:
+        for record in data:
             proficiency_scores.append({
                 "y": record["proficiency_level"],
                 "feedback": record["feedback"]
