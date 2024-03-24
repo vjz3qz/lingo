@@ -13,6 +13,8 @@ import os
 from flask import abort
 from werkzeug.utils import secure_filename
 from services.transcription_service import transcribe_audio
+from flask import current_app
+
 
 v1 = Blueprint('v1', __name__)
 
@@ -199,3 +201,25 @@ def analyze_proficiency():
 def get_proficiency_scores(user_id, language):
     proficiency_scores, last_feedback = get_user_proficiency_scores_by_language(user_id, language)
     return jsonify({"proficiency_scores": proficiency_scores, "last_feedback": last_feedback})
+
+# Audio endpoint
+@v1.route('/transcribe-audio', methods=['POST'])
+def transcribe_audio_endpoint():
+    if 'audio' not in request.files:
+        return jsonify({"error": "No audio file provided"}), 400
+
+    audio_file = request.files['audio']
+    filename = secure_filename(audio_file.filename)
+    audio_file_path = os.path.join(current_app.root_path, '..', '..', 'audioFiles', filename)
+    try:
+        # Make sure the directory exists, if not, create it
+        os.makedirs(os.path.dirname(audio_file_path), exist_ok=True)
+        # Save the audio file
+        audio_file.save(audio_file_path)
+        # Transcription service logic here
+        transcription_text = transcribe_audio(audio_file_path)
+        # Clean up if needed, then send response
+        return jsonify({"transcription": transcription_text})
+    except Exception as e:
+        current_app.logger.error(f"Error processing audio file: {e}")
+        return jsonify({"error": "Failed to process audio file"}), 500

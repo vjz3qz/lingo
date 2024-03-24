@@ -1,5 +1,4 @@
 // Chat.js
-
 import React, { useState } from "react";
 import ChatBubble from "../ui/ChatBubble";
 import ChatInputBar from "../subcomponents/ChatInputBar";
@@ -10,42 +9,20 @@ const Chat = ({ user }) => {
     { text: "Hello!", isUserMessage: false },
     { text: "How can I help you today?", isUserMessage: false },
   ]);
-  const [inputValue, setInputValue] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [audioChunks, setAudioChunks] = useState([]);
 
-  // Message Handling Functions
-  async function handleSendMessage() {
-    if (inputValue.trim()) {
-      // const payload = {
-      //   user_message: inputValue,
-      //   conversation_history: messages.map((m) => m.content),
-      // };
-      // const result = await axios.post("/api/v1/lingo-chat", payload);
-      // const responseMessage = result.data.response;
-      const responseMessage = "Hola";
-      setMessages([
-        ...messages,
-        { text: inputValue, isUserMessage: true },
-        { text: responseMessage, isUserMessage: false },
-      ]);
-      setInputValue("");
-      setInputValue("");
-    }
-  }
-
-  // Start recording audio
   const startRecording = async () => {
-    // Ensure we're not already recording
     if (isRecording) return;
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
       recorder.ondataavailable = (event) => {
-        setAudioChunks((currentChunks) => [...currentChunks, event.data]);
+        setAudioChunks(currentChunks => [...currentChunks, event.data]);
       };
+      recorder.onstop = handleRecordingStop; // Attach handleRecordingStop to onstop event
       recorder.start();
 
       setMediaRecorder(recorder);
@@ -55,10 +32,9 @@ const Chat = ({ user }) => {
     }
   };
   
-  // Stop recording audio
   const stopRecording = () => {
     if (mediaRecorder) {
-      mediaRecorder.stop();
+      mediaRecorder.stop(); // This will trigger the onstop event and call handleRecordingStop
       setIsRecording(false);
     }
   };
@@ -70,7 +46,7 @@ const Chat = ({ user }) => {
         user_message: transcribedText.trim(),
         conversation_history: messages.map((m) => m.content),
       };
-      const result = await axios.post("/api/v1/lingo-chat", payload);
+      const result = await axios.post("/api/v1/chat", payload);
       const responseMessage = result.data.response;
 
       setMessages([
@@ -80,12 +56,10 @@ const Chat = ({ user }) => {
       ]);
   };
 
-  // Called when the MediaRecorder stops recording
   const handleRecordingStop = async () => {
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     setAudioChunks([]);
 
-    // Now we need to send this audio blob to the server
     try {
       const formData = new FormData();
       formData.append('audio', audioBlob, 'user_audio.wav');
@@ -136,7 +110,7 @@ const Chat = ({ user }) => {
         <div className="action-buttons"></div>
         <ChatInputBar
           handleStartRecording={startRecording}
-          handleStopRecording={stopRecording}
+          handleRecordingStop={stopRecording} // This should match what you define in ChatInputBar props
           isRecording={isRecording}
         />
       </div>

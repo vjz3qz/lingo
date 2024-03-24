@@ -3,7 +3,7 @@ import { Box, IconButton } from "@mui/material";
 import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
 
-function ChatInputBar({ handleStartRecording, handleStopRecording, isRecording }) {
+function ChatInputBar({ handleStartRecording, handleRecordingStop, isRecording }) {
   return (
     <Box
       sx={{
@@ -20,7 +20,7 @@ function ChatInputBar({ handleStartRecording, handleStopRecording, isRecording }
       {isRecording ? (
         <IconButton
           color="error"
-          onClick={handleStopRecording}
+          onClick={handleRecordingStop}
           aria-label="stop recording"
         >
           <StopIcon fontSize="large" />
