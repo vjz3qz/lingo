@@ -24,50 +24,50 @@ import {
   Legend,
 } from "recharts";
 import moment from "moment";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-
-// Sample data for each language
-const languageData = {
-  Spanish: [
-    { datetime: "2023-09-01 08:00", y: 1, feedback: "Getting started" },
-    { datetime: "2023-09-01 09:00", y: 10, feedback: "Improvement visible" },
-    { datetime: "2023-09-01 10:00", y: 30, feedback: "Good progress" },
-    { datetime: "2023-09-01 14:00", y: 90, feedback: "Excellent work" },
-  ],
-  German: [
-    { datetime: "2023-09-01 09:30", y: 15, feedback: "Improving" },
-    { datetime: "2023-09-01 09:45", y: 5, feedback: "Improvement visible" },
-    { datetime: "2023-09-01 10:00", y: 25, feedback: "Good progress" },
-    { datetime: "2023-09-01 14:00", y: 45, feedback: "Excellent work" },
-  ],
-  French: [{ datetime: "2023-09-02 09:30", y: 40, feedback: "Excellent" }],
-};
+import { useNavigate } from "react-router-dom";
+import axios from 'axios'; // Ensure axios is imported
 
 const drawerWidth = 240;
 
 function ProficiencyPage({ session }) {
   const navigate = useNavigate();
+  const [selectedLanguage, setSelectedLanguage] = useState("Spanish");
+  const [proficiencyScores, setProficiencyScores] = useState({}); // State to store proficiency scores
 
   useEffect(() => {
-    // Check if the user is authenticated
     if (!session) {
       navigate("/auth");
+    } else {
+      fetchProficiencyScores(selectedLanguage);
     }
-  }, []);
-  const [selectedLanguage, setSelectedLanguage] = useState("Spanish");
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State to manage drawer open/close
+  }, [session, selectedLanguage, navigate]);
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State to manage drawer open/close
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  const selectedData = languageData[selectedLanguage];
-  const mostRecentData = selectedData[selectedData.length - 1] || {};
-  const mostRecentScore = mostRecentData.y;
-  const highestScore = Math.max(...selectedData.map((s) => s.y));
-  const mostRecentFeedback = mostRecentData.feedback;
+  // Function to fetch proficiency scores from the server
+  const fetchProficiencyScores = async (language) => {
+    try {
+      const response = await axios.get(`/api/v1/get-proficiency-scores/${language}`);
+      if (response.status === 200) {
+        setProficiencyScores({ ...proficiencyScores, [language]: response.data.proficiency_scores });
+      } else {
+        console.error('Failed to fetch data:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching proficiency scores:', error);
+    }
+  };
 
-  // Determine speaker level based on the most recent score
+  const selectedData = proficiencyScores[selectedLanguage] || []; // Fallback to an empty array
+  const mostRecentData = selectedData[selectedData.length - 1] || {};
+  const mostRecentScore = mostRecentData.y || 0;
+  const highestScore = selectedData.length ? Math.max(...selectedData.map((s) => s.y)) : 0;
+  const mostRecentFeedback = mostRecentData.feedback || "No data available";
+
+  // Function to determine speaker level
   const getSpeakerLevel = (score) => {
     if (score >= 90) return "Native";
     if (score >= 70) return "Expert";
@@ -75,7 +75,6 @@ function ProficiencyPage({ session }) {
     return "Novice";
   };
   const speakerLevel = getSpeakerLevel(mostRecentScore);
-
   return (
     <Box sx={{ display: "flex" }}>
       <IconButton
@@ -86,7 +85,6 @@ function ProficiencyPage({ session }) {
         sx={{ mr: 2 }}
       >
         <MenuIcon />{" "}
-        {/* Replace MenuIcon with ArrowForwardIosIcon if you prefer an arrow */}
       </IconButton>
       <Drawer
         anchor="left"
