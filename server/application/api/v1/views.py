@@ -30,11 +30,6 @@ def update_user():
     if session is None:
         return jsonify({"message": "Invalid token"}), 403
 
-    # Get the user data from the Supabase Auth server
-    user = db_client.auth.get_user_by_id(session["user_id"])
-    if user is None:
-        return jsonify({"message": "User not found"}), 403
-
     # Get the user ID from the user data
     user_id = user["id"]
 

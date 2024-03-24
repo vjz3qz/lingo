@@ -6,10 +6,10 @@ import {
   Typography,
   Box,
   Alert,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
-import SendIcon from '@mui/icons-material/Send'; // Import the send icon
+import SendIcon from "@mui/icons-material/Send"; // Import the send icon
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -68,12 +68,11 @@ function LanguageLearningForm({ session }) {
     if (!validateForm()) return;
 
     try {
-      const accessToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("access_token="))
-        .split("=")[1];
-      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      const response = await axios.post("/api/v1/update-user", form);
+      const response = await axios.post("/api/v1/update-user", form, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
       console.log("Server response:", response.data);
       navigate("/home");
     } catch (error) {
@@ -103,8 +102,6 @@ function LanguageLearningForm({ session }) {
         general: errorMessage,
       }));
     }
-
-    
   };
 
   return (
@@ -189,24 +186,24 @@ function LanguageLearningForm({ session }) {
             }}
           />
 
-                    {/* Submit and Home icon buttons */}
-            <Box sx={{ display: "flex", justifyContent: "space-around", mt: 2 }}>
-                <IconButton
-                    color="primary"
-                    type="submit" // Specify type to submit form
-                    sx={{ "&:hover": { bgcolor: "primary.dark" } }}
-                    aria-label="submit profile"
-                >
-                    <SendIcon fontSize="large" />
-                </IconButton>
-                <IconButton
-                    color="primary"
-                    onClick={() => navigate("/home")}
-                    aria-label="go to home"
-                >
-                    <HomeIcon fontSize="large" />
-                </IconButton>
-            </Box>
+          {/* Submit and Home icon buttons */}
+          <Box sx={{ display: "flex", justifyContent: "space-around", mt: 2 }}>
+            <IconButton
+              color="primary"
+              type="submit" // Specify type to submit form
+              sx={{ "&:hover": { bgcolor: "primary.dark" } }}
+              aria-label="submit profile"
+            >
+              <SendIcon fontSize="large" />
+            </IconButton>
+            <IconButton
+              color="primary"
+              onClick={() => navigate("/home")}
+              aria-label="go to home"
+            >
+              <HomeIcon fontSize="large" />
+            </IconButton>
+          </Box>
         </form>
       </Box>
     </Container>
