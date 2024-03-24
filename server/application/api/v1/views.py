@@ -27,9 +27,9 @@ def update_user():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    user_id = get_user_id(token)
+    user_id, error = get_user_id(token)
     if user_id is None:
-        return jsonify({"message": "Invalid token"}), 403
+        return jsonify({"message": error}), 403
 
     # Get request data
     data = request.get_json()
@@ -68,9 +68,9 @@ def get_user():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    user_id = get_user_id(token)
+    user_id, error = get_user_id(token)
     if user_id is None:
-        return jsonify({"message": "Invalid token"}), 403
+        return jsonify({"message": error}), 403
 
     # Get the user data from the Supabase Auth server
     user = db_client.auth.get_user_by_id(session["user_id"])
@@ -90,9 +90,9 @@ def chat():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    user_id = get_user_id(token)
+    user_id, error = get_user_id(token)
     if user_id is None:
-        return jsonify({"message": "Invalid token"}), 403
+        return jsonify({"message": error}), 403
 
     # Get the user data from the Supabase Auth server
     user = db_client.auth.get_user_by_id(session["user_id"])
@@ -122,9 +122,9 @@ def analyze_proficiency():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    user_id = get_user_id(token)
+    user_id, error = get_user_id(token)
     if user_id is None:
-        return jsonify({"message": "Invalid token"}), 403
+        return jsonify({"message": error}), 403
 
     # Get the user data from the Supabase Auth server
     user = db_client.auth.get_user_by_id(session["user_id"])
@@ -154,9 +154,9 @@ def get_proficiency_scores(language):
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    user_id = get_user_id(token)
+    user_id, error = get_user_id(token)
     if user_id is None:
-        return jsonify({"message": "Invalid token"}), 403
+        return jsonify({"message": error}), 403
 
     # Get the user data from the Supabase Auth server
     user = db_client.auth.get_user_by_id(session["user_id"])
@@ -178,9 +178,9 @@ def transcribe_audio_endpoint():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    user_id = get_user_id(token)
+    user_id, error = get_user_id(token)
     if user_id is None:
-        return jsonify({"message": "Invalid token"}), 403
+        return jsonify({"message": error}), 403
 
     # Get the user data from the Supabase Auth server
     user = db_client.auth.get_user_by_id(session["user_id"])
