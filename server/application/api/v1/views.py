@@ -8,9 +8,13 @@ from application.controllers.chat_controller import (
 
 from application.services.database_service import create_user_in_db, update_user_in_db, get_user_data, signup_user, login_user, logout_user
 
-from flask import jsonify, request, abort, make_response
+from flask import Blueprint, request, abort, make_response, jsonify
 import os
 from flask import abort
+from werkzeug.utils import secure_filename
+from services.transcription_service import transcribe_audio
+
+v1 = Blueprint('v1', __name__)
 
 # sign up endpoint
 @v1.route("/sign-up", methods=["POST"])

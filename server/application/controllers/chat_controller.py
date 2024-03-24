@@ -4,6 +4,8 @@ from application.services.database_service import db_client, get_user_data, get_
 from application.services.nlp_service import chat_model
 from application.utils.parse_conversation import parse_conversation
 import logging
+# from application.services.transcription_service import transcribe_audio
+
 
 
 

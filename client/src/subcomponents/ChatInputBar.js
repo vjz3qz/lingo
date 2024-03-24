@@ -1,24 +1,40 @@
 import React from "react";
+import { Box, IconButton } from "@mui/material";
+import MicIcon from "@mui/icons-material/Mic";
+import StopIcon from "@mui/icons-material/Stop";
 
-function ChatInputBar({ inputValue, setInputValue, handleSendMessage }) {
+function ChatInputBar({ handleStartRecording, handleStopRecording, isRecording }) {
   return (
-    <div className="chat-bar">
-      <input
-        type="text"
-        className="chat-input"
-        placeholder={"Send a message..."}
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        // disabled={false}
-      />
-      <button
-        className="chat-send-button"
-        onClick={handleSendMessage}
-        // disabled={false}
-      >
-        Send
-      </button>
-    </div>
+    <Box
+      sx={{
+        width: '100%',
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        p: 2,
+        backgroundColor: 'background.paper',
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
+      {isRecording ? (
+        <IconButton
+          color="error"
+          onClick={handleStopRecording}
+          aria-label="stop recording"
+        >
+          <StopIcon fontSize="large" />
+        </IconButton>
+      ) : (
+        <IconButton
+          color="primary"
+          onClick={handleStartRecording}
+          aria-label="start recording"
+        >
+          <MicIcon fontSize="large" />
+        </IconButton>
+      )}
+    </Box>
   );
 }
 

@@ -107,16 +107,44 @@
   margin-right: 10px;
 }
 
-/* Style for the chat send button */
-.chat-send-button {
+/* Add this new class for the recording buttons */
+.chat-record-button {
   padding: 10px 15px;
-  background-color: #000; /* Assuming a black send button */
-  color: #fff; /* Text color for the send button */
+  margin-right: 8px; /* Add space to the right of the button */
+  background-color: green; /* Green for record, red for stop */
+  color: #fff;
   border: none;
   border-radius: 20px;
   cursor: pointer;
   position: relative;
+  text-align: center; /* Explicitly center text */
 }
+
+.chat-record-end-button {
+  padding: 10px 15px;
+  margin-right: 8px; /* Add space to the right of the button */
+  background-color: red; /* Example color; customize as needed */
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+  
+}
+
+
+/* Updated style for the chat send button */
+.chat-send-button {
+  padding: 10px 15px;
+  background-color: #000; /* Black send button */
+  color: #fff; /* White text color for the send button */
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+  /* Remove margin if you have it on all buttons and only want it on the record buttons */
+}
+
 
 .fade-out {
   opacity: 0.5; /* Adjust the opacity level as needed */

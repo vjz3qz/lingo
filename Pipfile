@@ -19,6 +19,8 @@ pydantic = "*"
 lxml = "*"
 gunicorn = "*"
 pytest = "*"
+python-docx = "*"
+websockets = "*"
 
 [dev-packages]
 
