@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Home from "./pages/Home";
 import ChatWrapper from "./pages/ChatWrapper";
 import Form from "./pages/Form";
@@ -11,6 +16,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Navigate to="/auth" />} />
         <Route
           path="/auth"
           element={<Authentication session={session} setSession={setSession} />}
