@@ -25,7 +25,7 @@ function ChatWrapper({ session }) {
     <div className={`app-container`}>
       <Header user={user} />
       <div className="main-container">
-        <Chat language={language} />
+        <Chat language={language} session={session} />
       </div>
     </div>
   );

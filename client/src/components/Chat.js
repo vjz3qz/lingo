@@ -4,7 +4,7 @@ import ChatBubble from "../ui/ChatBubble";
 import ChatInputBar from "../subcomponents/ChatInputBar";
 import axios from "axios";
 
-const Chat = ({ language }) => {
+const Chat = ({ language, session }) => {
   const [messages, setMessages] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
@@ -17,7 +17,11 @@ const Chat = ({ language }) => {
         language: language,
         conversation_history: [],
       };
-      const result = await axios.post("/api/v1/chat", payload);
+      const result = await axios.post("/api/v1/chat", payload, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
       const responseMessage = result.data.response;
 
       setMessages([
@@ -62,7 +66,11 @@ const Chat = ({ language }) => {
       language: language,
       conversation_history: messages.map((m) => m.content),
     };
-    const result = await axios.post("/api/v1/chat", payload);
+    const result = await axios.post("/api/v1/chat", payload, {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
     const responseMessage = result.data.response;
 
     setMessages([
@@ -80,16 +88,17 @@ const Chat = ({ language }) => {
       const formData = new FormData();
       formData.append("audio", audioBlob, "user_audio.wav");
 
-      const response = await fetch("/api/v1/transcribe-audio", {
-        method: "POST",
-        body: formData,
+      const response = await axios.post("/api/v1/transcribe-audio", formData, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
 
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = response.data;
       handleReceivedTranscription(data.transcription);
     } catch (error) {
       console.error("Error sending audio:", error);
