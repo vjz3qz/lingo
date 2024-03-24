@@ -10,7 +10,7 @@ from application.controllers.chat_controller import (
     get_chat_response,
     analyze_proficiency,
 )
-from application.services.database_service import update_user_in_db, get_user_data, db_client
+from application.services.database_service import update_user_in_db, get_user_data, get_user_proficiency_scores_by_language
 from application.services.nlp_service import transcribe_audio
 from application.services.auth_service import get_user_id
 
@@ -72,11 +72,6 @@ def get_user():
     if user_id is None:
         return jsonify({"message": error}), 403
 
-    # Get the user data from the Supabase Auth server
-    user = db_client.auth.get_user_by_id(session["user_id"])
-    if user is None:
-        return jsonify({"message": "User not found"}), 403
-
     name, previous_knowledge, interests = get_user_data(user_id)
     return jsonify({"name": name, "previous_knowledge": previous_knowledge, "interests": interests})
 
@@ -93,11 +88,6 @@ def chat():
     user_id, error = get_user_id(token)
     if user_id is None:
         return jsonify({"message": error}), 403
-
-    # Get the user data from the Supabase Auth server
-    user = db_client.auth.get_user_by_id(session["user_id"])
-    if user is None:
-        return jsonify({"message": "User not found"}), 403
 
     # Get request data
     data = request.get_json()
@@ -126,11 +116,6 @@ def analyze_proficiency():
     if user_id is None:
         return jsonify({"message": error}), 403
 
-    # Get the user data from the Supabase Auth server
-    user = db_client.auth.get_user_by_id(session["user_id"])
-    if user is None:
-        return jsonify({"message": "User not found"}), 403
-
     # Get request data
     data = request.get_json()
 
@@ -158,15 +143,10 @@ def get_proficiency_scores(language):
     if user_id is None:
         return jsonify({"message": error}), 403
 
-    # Get the user data from the Supabase Auth server
-    user = db_client.auth.get_user_by_id(session["user_id"])
-    if user is None:
-        return jsonify({"message": "User not found"}), 403
-
     # Use the user ID to get the proficiency scores
-    proficiency_scores, last_feedback = get_user_proficiency_scores_by_language(user_id, language)
+    proficiency_scores = get_user_proficiency_scores_by_language(user_id, language)
 
-    return jsonify({"proficiency_scores": proficiency_scores, "last_feedback": last_feedback})
+    return jsonify({"proficiency_scores": proficiency_scores})
 
 
 # Audio endpoint
@@ -181,11 +161,6 @@ def transcribe_audio_endpoint():
     user_id, error = get_user_id(token)
     if user_id is None:
         return jsonify({"message": error}), 403
-
-    # Get the user data from the Supabase Auth server
-    user = db_client.auth.get_user_by_id(session["user_id"])
-    if user is None:
-        return jsonify({"message": "User not found"}), 403
 
     if 'audio' not in request.files:
         return jsonify({"error": "No audio file provided"}), 400

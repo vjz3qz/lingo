@@ -68,7 +68,7 @@ def create_proficiency_record(user_id, language, proficiency_level, feedback):
         "feedback": feedback
     }
     try:
-        data, count = db_client.table("proficiency").insert(proficiency_data).execute()
+        data, count = db_client.table("previous_proficiency_feedback").insert(proficiency_data).execute()
         logging.info(f"Proficiency record created successfully")
         return 200
     except Exception as e:
@@ -83,7 +83,7 @@ def get_user_data(user_id):
     logging.info(f"Getting user data for user: {user_id}")
     try:
         # Query user data from Supabase
-        response = db_client.table("users").select("*").eq("name", user_id).execute()
+        data, count = db_client.table("users").select("*").eq("name", user_id).execute()
         # TODO: parse response
     except Exception as e:
         logging.error(f"Failed to get user data: {e}")
@@ -97,8 +97,8 @@ def get_user_last_proficiency_by_language(user_id, language):
     logging.info(f"Getting last proficiency record for user: {user_id} in language: {language}")
     try:
         # Query proficiency records from Supabase
-        response = db_client.table("proficiency").select("*").eq("user_id", user_id).order("timestamp", ascending=False).execute()
-        # TODO return
+        data, count = db_client.table("previous_proficiency_feedback").select("*").eq("user_id", user_id).execute()
+        # TODO return latest record
     except Exception as e:
         logging.error(f"Failed to get last proficiency record: {e}")
         return None, None
@@ -110,8 +110,16 @@ def get_user_proficiency_scores_by_language(user_id, language):
     logging.info(f"Getting proficiency scores for user: {user_id} in language: {language}")
     try:
         # Query proficiency records from Supabase
-        response = db_client.table("proficiency").select("proficiency_level").eq("user_id", user_id).eq("language", language).order("timestamp", ascending=False).execute()
-        # TODO return
+        data, count = db_client.table("previous_proficiency_feedback").select("proficiency_level", "feedback").eq("user_id", user_id).eq("language", language).execute()
+        print(data) # TODO check when there is data
+        proficiency_scores = []
+        for record in data[1]:
+            proficiency_scores.append({
+                "y": record["proficiency_level"],
+                "feedback": record["feedback"]
+            })
+        
+        return proficiency_scores
     except Exception as e:
         logging.error(f"Failed to get proficiency scores: {e}")
-        return None, None
+        return None

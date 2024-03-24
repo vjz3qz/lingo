@@ -34,6 +34,20 @@ function ProficiencyPage({ session }) {
   const [selectedLanguage, setSelectedLanguage] = useState("Spanish");
   const [proficiencyScores, setProficiencyScores] = useState({}); // State to store proficiency scores
 
+  // {
+  //   "Spanish": [
+  //     { "y": 80, "feedback": "Good job!" },
+  //     { "y": 90, "feedback": "Excellent!" },
+  //     // ...
+  //   ],
+  //   "German": [
+  //     { "y": 70, "feedback": "Well done!" },
+  //     { "y": 85, "feedback": "Great!" },
+  //     // ...
+  //   ],
+  //   // ...
+  // }
+
   useEffect(() => {
     if (!session) {
       navigate("/auth");
