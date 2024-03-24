@@ -12,6 +12,7 @@ from application.controllers.chat_controller import (
 )
 from application.services.database_service import update_user_in_db, get_user_data, db_client
 from application.services.nlp_service import transcribe_audio
+from application.services.auth_service import get_user_id
 
 @v1.route("/health", methods=["GET"])
 def health():
@@ -26,12 +27,9 @@ def update_user():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    session = db_client.auth.decode_token(token)
-    if session is None:
+    user_id = get_user_id(token)
+    if user_id is None:
         return jsonify({"message": "Invalid token"}), 403
-
-    # Get the user ID from the user data
-    user_id = user["id"]
 
     # Get request data
     data = request.get_json()
@@ -70,17 +68,14 @@ def get_user():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    session = db_client.auth.decode_token(token)
-    if session is None:
+    user_id = get_user_id(token)
+    if user_id is None:
         return jsonify({"message": "Invalid token"}), 403
 
     # Get the user data from the Supabase Auth server
     user = db_client.auth.get_user_by_id(session["user_id"])
     if user is None:
         return jsonify({"message": "User not found"}), 403
-
-    # Get the user ID from the user data
-    user_id = user["id"]
 
     name, previous_knowledge, interests = get_user_data(user_id)
     return jsonify({"name": name, "previous_knowledge": previous_knowledge, "interests": interests})
@@ -95,17 +90,14 @@ def chat():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    session = db_client.auth.decode_token(token)
-    if session is None:
+    user_id = get_user_id(token)
+    if user_id is None:
         return jsonify({"message": "Invalid token"}), 403
 
     # Get the user data from the Supabase Auth server
     user = db_client.auth.get_user_by_id(session["user_id"])
     if user is None:
         return jsonify({"message": "User not found"}), 403
-
-    # Get the user ID from the user data
-    user_id = user["id"]
 
     # Get request data
     data = request.get_json()
@@ -130,17 +122,14 @@ def analyze_proficiency():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    session = db_client.auth.decode_token(token)
-    if session is None:
+    user_id = get_user_id(token)
+    if user_id is None:
         return jsonify({"message": "Invalid token"}), 403
 
     # Get the user data from the Supabase Auth server
     user = db_client.auth.get_user_by_id(session["user_id"])
     if user is None:
         return jsonify({"message": "User not found"}), 403
-
-    # Get the user ID from the user data
-    user_id = user["id"]
 
     # Get request data
     data = request.get_json()
@@ -165,17 +154,14 @@ def get_proficiency_scores(language):
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    session = db_client.auth.decode_token(token)
-    if session is None:
+    user_id = get_user_id(token)
+    if user_id is None:
         return jsonify({"message": "Invalid token"}), 403
 
     # Get the user data from the Supabase Auth server
     user = db_client.auth.get_user_by_id(session["user_id"])
     if user is None:
         return jsonify({"message": "User not found"}), 403
-
-    # Get the user ID from the user data
-    user_id = user["id"]
 
     # Use the user ID to get the proficiency scores
     proficiency_scores, last_feedback = get_user_proficiency_scores_by_language(user_id, language)
@@ -192,8 +178,8 @@ def transcribe_audio_endpoint():
         return jsonify({"message": "Token is missing"}), 403
 
     # Get the user ID from the token
-    session = db_client.auth.decode_token(token)
-    if session is None:
+    user_id = get_user_id(token)
+    if user_id is None:
         return jsonify({"message": "Invalid token"}), 403
 
     # Get the user data from the Supabase Auth server
