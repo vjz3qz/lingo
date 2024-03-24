@@ -6,7 +6,7 @@ from application.controllers.chat_controller import (
     analyze_proficiency,
 )
 
-from application.services.database_service import create_user_in_db, update_user_in_db, get_user_data, signup_user, login_user, logout_user, db_client
+from application.services.database_service import update_user_in_db, get_user_data, db_client
 
 from flask import Blueprint, request, abort, make_response, jsonify
 import os
@@ -18,38 +18,6 @@ from flask import current_app
 
 v1 = Blueprint('v1', __name__)
 
-# create user endpoint
-@v1.route("/create-user", methods=["POST"])
-def create_user():
-    # Get access token from cookie
-    access_token = request.cookies.get('access_token')
-    # Get request data
-    data = request.get_json()
-
-    # Extract user ID and user data from request body
-    name = data.get("name", "")
-    if not name:
-        return jsonify({"message": "Name is required"}), 400
-    previous_knowledge = data.get("previous_knowledge", "")
-    if not previous_knowledge:
-        return jsonify({"message": "Previous knowledge is required"}), 400
-    interests = data.get("interests", "")
-    if not interests:
-        return jsonify({"message": "Interests are required"}), 400
-
-    # Call create user function
-    status = create_user_in_db(name, previous_knowledge, interests)
-    if status == 200:
-        # Return success response
-        return jsonify({"message": "User created successfully"}), 200
-    elif status == 500:
-        # Return failure response
-        return jsonify({"message": "Failed to create user"}), 500
-    else:
-        # Return generic error response
-        abort(500)
-
-#TODO merge create/update user
 # update user endpoint
 @v1.route("/update-user", methods=["POST"])
 def update_user():
@@ -70,7 +38,7 @@ def update_user():
 
     # Get the user ID from the user data
     user_id = user["id"]
-    
+
     # Get request data
     data = request.get_json()
 

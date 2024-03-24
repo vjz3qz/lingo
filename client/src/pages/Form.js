@@ -70,7 +70,7 @@ function LanguageLearningForm({ session }) {
         .find((row) => row.startsWith("access_token="))
         .split("=")[1];
       axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      const response = await axios.post("/api/v1/chat", form);
+      const response = await axios.post("/api/v1/update-user", form);
       console.log("Server response:", response.data);
       navigate("/home");
     } catch (error) {

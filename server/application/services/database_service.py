@@ -29,45 +29,22 @@ db_client = init_db(supabase_url, supabase_key)
 
 
 
-def create_user_in_db(name, previous_knowledge, interests):
-    """
-    Create a new user in the database
-    """
-    logging.info(f"Creating user: {name}")
-    
-    # Upload user data to Supabase
-    user_data = {
-        "name": name,
-        "previous_knowledge": previous_knowledge,
-        "interests": interests
-    }
-    try:
-        data, count = db_client.table("users").insert(user_data).execute()
-        logging.info(f"User {name} created successfully")
-        return 200
-    except Exception as e:
-        logging.error(f"Failed to create user: {e}")
-        return 500
-
-
 def update_user_in_db(user_id, name, previous_knowledge, interests):
     """
     Update an existing user in the database
     """
     logging.info(f"Updating user: {user_id}")
-    # Check if user exists
-    data, count = db_client.table("users").select("*").eq("id", user_id).execute()
-    if not data:
-        logging.error(f"User {user_id} does not exist")
-        return 400
+    
     # Upload user data to Supabase
     user_data = {
+        "id": user_id,
         "name": name,
         "previous_knowledge": previous_knowledge,
         "interests": interests
     }
+    
     try:
-        data, count = db_client.table("users").update(user_data).eq("id", user_id).execute()
+        data, count = db_client.table("users").upsert(user_data, "id").execute()
         logging.info(f"User {user_id} updated successfully")
         return 200
     except Exception as e:
