@@ -9,10 +9,10 @@ import {
   ListItem,
   ListItemText,
   Grid,
-  IconButton,
-  Button,
+  IconButton
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
 import {
   LineChart,
   Line,
@@ -177,13 +177,13 @@ function ProficiencyPage({ session }) {
             justifyContent: "center",
           }}
         >
-          <Button
-            variant="contained"
+          <IconButton
             color="primary"
             onClick={() => navigate("/home")}
+            aria-label="go to home"
           >
-            Back to Home
-          </Button>
+            <HomeIcon fontSize="large" /> {/* Use the Home icon */}
+          </IconButton>
         </Box>
       </Container>
     </Box>

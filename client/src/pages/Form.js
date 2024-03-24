@@ -6,7 +6,10 @@ import {
   Typography,
   Box,
   Alert,
+  IconButton
 } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import SendIcon from '@mui/icons-material/Send'; // Import the send icon
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -186,36 +189,24 @@ function LanguageLearningForm({ session }) {
             }}
           />
 
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              sx={{
-                bgcolor: "primary.main",
-                "&:hover": {
-                  bgcolor: "primary.dark",
-                },
-              }}
-            >
-              Submit Profile
-            </Button>
-            {/* Add this Button to go back to the home page */}
-            <Button
-                variant="contained"
-                color="secondary"
-                onClick={navigate("/home")}
-                sx={{
-                bgcolor: "primary.main",
-                "&:hover": {
-                    bgcolor: "primary.dark",
-                },
-                ml: 2, // Add some left margin to separate it from the submit button
-                }}
-            >
-                Go to Home
-            </Button>
-          </Box>
+                    {/* Submit and Home icon buttons */}
+            <Box sx={{ display: "flex", justifyContent: "space-around", mt: 2 }}>
+                <IconButton
+                    color="primary"
+                    type="submit" // Specify type to submit form
+                    sx={{ "&:hover": { bgcolor: "primary.dark" } }}
+                    aria-label="submit profile"
+                >
+                    <SendIcon fontSize="large" />
+                </IconButton>
+                <IconButton
+                    color="primary"
+                    onClick={() => navigate("/home")}
+                    aria-label="go to home"
+                >
+                    <HomeIcon fontSize="large" />
+                </IconButton>
+            </Box>
         </form>
       </Box>
     </Container>
