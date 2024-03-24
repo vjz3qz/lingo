@@ -1,11 +1,20 @@
 // ChatWrapper.js
 
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Home.css";
 import Header from "../ui/Header";
 import Chat from "../components/Chat";
 
-const ChatWrapper = () => {
+function ChatWrapper({ session }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!session) {
+      navigate("/auth");
+    }
+  }, []);
   const user = {
     name: "Varun Pasupuleti",
     avatar: "path-to-avatar-image.png",
@@ -19,6 +28,6 @@ const ChatWrapper = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ChatWrapper;

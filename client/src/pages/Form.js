@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   TextField,
@@ -10,7 +10,15 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function LanguageLearningForm() {
+function LanguageLearningForm({ session }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!session) {
+      navigate("/auth");
+    }
+  }, []);
   const [form, setForm] = useState({
     name: "",
     previous_knowledge: "",
@@ -23,8 +31,6 @@ function LanguageLearningForm() {
     interests: false,
     general: "",
   });
-
-  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
