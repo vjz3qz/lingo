@@ -65,7 +65,7 @@ const LanguageOption = styled(Typography)({
   transition: "visibility 0s, opacity 0.5s linear",
 });
 
-function Home({ session }) {
+function Home({ supabase, session }) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -102,9 +102,14 @@ function Home({ session }) {
     };
   }, []);
 
-  //   const handleStartConversation = () => {
-  //     navigate(`/conversation/${languages[selectedLanguageIndex].toLowerCase()}`);
-  //   };
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      navigate("/auth");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   const handleStartConversation = async () => {
     const language = languages[selectedLanguageIndex].toLowerCase();
@@ -146,6 +151,9 @@ function Home({ session }) {
           onClick={() => navigate("/proficiency")}
         >
           Proficiency
+        </CustomButton>
+        <CustomButton variant="outlined" onClick={handleLogout}>
+          Logout
         </CustomButton>
       </Box>
     </FullScreenContainer>
