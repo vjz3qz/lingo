@@ -1,17 +1,33 @@
 // Chat.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatBubble from "../ui/ChatBubble";
 import ChatInputBar from "../subcomponents/ChatInputBar";
-import axios from 'axios';
+import axios from "axios";
 
-const Chat = ({ user }) => {
-  const [messages, setMessages] = useState([
-    { text: "Hello!", isUserMessage: false },
-    { text: "How can I help you today?", isUserMessage: false },
-  ]);
+const Chat = ({ language }) => {
+  const [messages, setMessages] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [audioChunks, setAudioChunks] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const payload = {
+        user_message: "",
+        language: language,
+        conversation_history: [],
+      };
+      const result = await axios.post("/api/v1/chat", payload);
+      const responseMessage = result.data.response;
+
+      setMessages([
+        ...messages,
+        { text: responseMessage, isUserMessage: false },
+      ]);
+    };
+
+    fetchData();
+  }, []);
 
   const startRecording = async () => {
     if (isRecording) return;
@@ -20,7 +36,7 @@ const Chat = ({ user }) => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
       recorder.ondataavailable = (event) => {
-        setAudioChunks(currentChunks => [...currentChunks, event.data]);
+        setAudioChunks((currentChunks) => [...currentChunks, event.data]);
       };
       recorder.onstop = handleRecordingStop; // Attach handleRecordingStop to onstop event
       recorder.start();
@@ -31,7 +47,7 @@ const Chat = ({ user }) => {
       console.error("Error starting recording:", error);
     }
   };
-  
+
   const stopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop(); // This will trigger the onstop event and call handleRecordingStop
@@ -39,33 +55,33 @@ const Chat = ({ user }) => {
     }
   };
 
-
   // Handle transcription result
-  async function handleReceivedTranscription(transcribedText){
-     const payload = {
-        user_message: transcribedText.trim(),
-        conversation_history: messages.map((m) => m.content),
-      };
-      const result = await axios.post("/api/v1/chat", payload);
-      const responseMessage = result.data.response;
+  async function handleReceivedTranscription(transcribedText) {
+    const payload = {
+      user_message: transcribedText.trim(),
+      language: language,
+      conversation_history: messages.map((m) => m.content),
+    };
+    const result = await axios.post("/api/v1/chat", payload);
+    const responseMessage = result.data.response;
 
-      setMessages([
-        ...messages,
-        { text: transcribedText, isUserMessage: true },
-        { text: responseMessage, isUserMessage: false },
-      ]);
-  };
+    setMessages([
+      ...messages,
+      { text: transcribedText, isUserMessage: true },
+      { text: responseMessage, isUserMessage: false },
+    ]);
+  }
 
   const handleRecordingStop = async () => {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
     setAudioChunks([]);
 
     try {
       const formData = new FormData();
-      formData.append('audio', audioBlob, 'user_audio.wav');
+      formData.append("audio", audioBlob, "user_audio.wav");
 
-      const response = await fetch('/api/v1/transcribe-audio', {
-        method: 'POST',
+      const response = await fetch("/api/v1/transcribe-audio", {
+        method: "POST",
         body: formData,
       });
 
@@ -76,10 +92,9 @@ const Chat = ({ user }) => {
       const data = await response.json();
       handleReceivedTranscription(data.transcription);
     } catch (error) {
-      console.error('Error sending audio:', error);
+      console.error("Error sending audio:", error);
     }
   };
-
 
   // Render Functions
   const ChatBubbles = () => {

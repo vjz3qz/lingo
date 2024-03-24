@@ -1,12 +1,13 @@
 // ChatWrapper.js
 
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../styles/Home.css";
 import Header from "../ui/Header";
 import Chat from "../components/Chat";
 
 function ChatWrapper({ session }) {
+  let { language } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,7 +25,7 @@ function ChatWrapper({ session }) {
     <div className={`app-container`}>
       <Header user={user} />
       <div className="main-container">
-        <Chat user={user} />
+        <Chat language={language} />
       </div>
     </div>
   );

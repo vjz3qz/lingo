@@ -111,10 +111,8 @@ function Home({ session }) {
 
     try {
       // Send the selected language to the server
-      const response = await axios.post("/api/v1/chat", { language });
-      console.log("Server response:", response.data);
       // Navigate to the chat page after successfully sending the data
-      navigate("/conversation");
+      navigate(`/chat/${language}`);
     } catch (error) {
       console.error("Starting conversation failed:", error);
     }

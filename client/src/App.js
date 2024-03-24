@@ -21,7 +21,10 @@ function App() {
         />
         <Route path="/form" element={<Form session={session} />} />
         <Route path="/home" element={<Home session={session} />} />
-        <Route path="/chat" element={<ChatWrapper session={session} />} />
+        <Route
+          path="/chat/:language"
+          element={<ChatWrapper session={session} />}
+        />
         <Route
           path="/proficiency"
           element={<Proficiency session={session} />}
