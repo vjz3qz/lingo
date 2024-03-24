@@ -12,82 +12,15 @@ from flask import Blueprint, request, abort, make_response, jsonify
 import os
 from flask import abort
 from werkzeug.utils import secure_filename
-from services.transcription_service import transcribe_audio
+from application.services.nlp_service import transcribe_audio
 from flask import current_app
 
 
 v1 = Blueprint('v1', __name__)
 
-# sign up endpoint
-@v1.route("/sign-up", methods=["POST"])
-def sign_up():
-    # Get request data
-    data = request.get_json()
-
-    # Extract user ID and user data from request body
-    email = data.get("email", "")
-    if not email:
-        return jsonify({"message": "Email is required"}), 400
-    password = data.get("password", "")
-    if not password:
-        return jsonify({"message": "Password is required"}), 400
-
-    # Call signup user function
-    status, session = signup_user(email, password)
-    if status == 200:
-        # Return success response
-
-        response = make_response(jsonify({'message': 'Logged in successfully'}))
-        response.set_cookie('access_token', session['access_token'], httponly=True, secure=True)
-        return response
-        return jsonify({"message": "User signed up successfully"}), 200
-    elif status == 500:
-        # Return failure response
-        return jsonify({"message": "Failed to sign up user"}), 500
-    else:
-        # Return generic error response
-        abort(500)
-
-# log in endpoint
-@v1.route("/log-in", methods=["POST"])
-def log_in():
-    # Get request data
-    data = request.get_json()
-
-    # Extract user ID and user data from request body
-    email = data.get("email", "")
-    if not email:
-        return jsonify({"message": "Email is required"}), 400
-    password = data.get("password", "")
-    if not password:
-        return jsonify({"message": "Password is required"}), 400
-
-    # Call login user function
-    status = login_user(email, password)
-    if status == 200:
-        # Return success response
-        return jsonify({"message": "User logged in successfully"}), 200
-    elif status == 500:
-        # Return failure response
-        return jsonify({"message": "Failed to log in user"}), 500
-    else:
-        # Return generic error response
-        abort(500)
-
-# log out endpoint
-@v1.route("/log-out", methods=["POST"])
-def log_out():
-    # Call logout user function
-    status = logout_user()
-    if status == 200:
-        # Return success response
-        return jsonify({"message": "User logged out successfully"}), 200
-    elif status == 500:
-        # Return failure response
-        return jsonify({"message": "Failed to log out user"}), 500
-    else:
-        # Return generic error response
-        abort(500)
+@v1.route("health", methods=["GET"])
+def health():
+    return jsonify({"message": "API is running"})
 
 # create user endpoint
 @v1.route("/create-user", methods=["POST"])
