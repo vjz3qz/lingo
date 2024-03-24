@@ -6,7 +6,7 @@ from application.controllers.chat_controller import (
     analyze_proficiency,
 )
 
-from application.services.database_service import create_user_in_db, update_user_in_db, get_user_data, signup_user, login_user, logout_user
+from application.services.database_service import create_user_in_db, update_user_in_db, get_user_data, signup_user, login_user, logout_user, db_client
 
 from flask import Blueprint, request, abort, make_response, jsonify
 import os
@@ -94,13 +94,32 @@ def get_user(user_id):
 # chat endpoint
 @v1.route("/chat", methods=["POST"])
 def chat():
+    app.logger.debug("Received chat request")  # Add this line
+
+    # Extract the token from the Authorization header
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({"message": "Token is missing"}), 403
+
+    # Get the user ID from the token
+    session = db_client.auth.decode_token(token)
+    if session is None:
+        return jsonify({"message": "Invalid token"}), 403
+
+    # Get the user data from the Supabase Auth server
+    user = db_client.auth.get_user_by_id(session["user_id"])
+    if user is None:
+        return jsonify({"message": "User not found"}), 403
+
+    # Get the user ID from the user data
+    user_id = user["id"]
+
     # Get request data
     data = request.get_json()
 
     # Extract conversation history and user ID from request body
     conversation_history = data.get("conversation_history", [])
     language = data.get("language", "en")
-    user_id = data.get("user_id", "")
 
     # Call chat controller to get chat response
     response = get_chat_response(conversation_history, user_id, language)
@@ -126,10 +145,33 @@ def analyze_proficiency():
     # Return the proficiency analysis response
     return jsonify({"proficiency_level": proficiency_level, "feedback": feedback})
 
-@v1.route("/get-proficiency-scores/<user_id>/<language>", methods=["GET"])
-def get_proficiency_scores(user_id, language):
+
+
+@v1.route("/get-proficiency-scores/<language>", methods=["GET"])
+def get_proficiency_scores(language):
+    # Extract the token from the Authorization header
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({"message": "Token is missing"}), 403
+
+    # Get the user ID from the token
+    session = db_client.auth.decode_token(token)
+    if session is None:
+        return jsonify({"message": "Invalid token"}), 403
+
+    # Get the user data from the Supabase Auth server
+    user = db_client.auth.get_user_by_id(session["user_id"])
+    if user is None:
+        return jsonify({"message": "User not found"}), 403
+
+    # Get the user ID from the user data
+    user_id = user["id"]
+
+    # Use the user ID to get the proficiency scores
     proficiency_scores, last_feedback = get_user_proficiency_scores_by_language(user_id, language)
+
     return jsonify({"proficiency_scores": proficiency_scores, "last_feedback": last_feedback})
+
 
 # Audio endpoint
 @v1.route('/transcribe-audio', methods=['POST'])
