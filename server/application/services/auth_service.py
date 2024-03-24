@@ -14,13 +14,13 @@ def decode_token(token):
     try:
         # Assuming the token is prefixed with "Bearer ", remove this part to get the actual token
         actual_token = token.split(" ")[1] if ' ' in token else token
-
-        decoded_token = jwt.decode(actual_token, jwt_secret, algorithms=['HS256'], audience=f"https://{project_id}.supabase.co/auth/v1")
+        
+        decoded_token = jwt.decode(actual_token, jwt_secret, algorithms=['HS256'], audience= "authenticated", issuer=f"https://{project_id}.supabase.co/auth/v1")
         return decoded_token, None
-    except jwt.ExpiredSignatureError:
-        return None, 'Token has expired.'
-    except jwt.InvalidTokenError:
-        return None, 'Invalid token.'
+    except jwt.ExpiredSignatureError as e:
+        return None, 'Token has expired: ' + str(e)
+    except jwt.InvalidTokenError as e:
+        return None, 'Invalid token: ' + str(e)
 
 def get_user_id(token):
     decoded_token, error = decode_token(token)
