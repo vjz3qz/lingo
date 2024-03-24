@@ -53,13 +53,27 @@ def create_user():
 # update user endpoint
 @v1.route("/update-user", methods=["POST"])
 def update_user():
+    # Extract the token from the Authorization header
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({"message": "Token is missing"}), 403
+
+    # Get the user ID from the token
+    session = db_client.auth.decode_token(token)
+    if session is None:
+        return jsonify({"message": "Invalid token"}), 403
+
+    # Get the user data from the Supabase Auth server
+    user = db_client.auth.get_user_by_id(session["user_id"])
+    if user is None:
+        return jsonify({"message": "User not found"}), 403
+
+    # Get the user ID from the user data
+    user_id = user["id"]
+    
     # Get request data
     data = request.get_json()
 
-    # Extract user ID and user data from request body
-    user_id = data.get("user_id", "")
-    if not user_id:
-        return jsonify({"message": "User ID is required"}), 400
     name = data.get("name", "")
     if not name:
         return jsonify({"message": "Name is required"}), 400
@@ -86,8 +100,26 @@ def update_user():
         abort(500)
 
 
-@v1.route("/get-user/<user_id>", methods=["GET"])
-def get_user(user_id):
+@v1.route("/get-user", methods=["GET"])
+def get_user():
+    # Extract the token from the Authorization header
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({"message": "Token is missing"}), 403
+
+    # Get the user ID from the token
+    session = db_client.auth.decode_token(token)
+    if session is None:
+        return jsonify({"message": "Invalid token"}), 403
+
+    # Get the user data from the Supabase Auth server
+    user = db_client.auth.get_user_by_id(session["user_id"])
+    if user is None:
+        return jsonify({"message": "User not found"}), 403
+
+    # Get the user ID from the user data
+    user_id = user["id"]
+
     name, previous_knowledge, interests = get_user_data(user_id)
     return jsonify({"name": name, "previous_knowledge": previous_knowledge, "interests": interests})
 
@@ -131,13 +163,30 @@ def chat():
 # analyze proficiency endpoint
 @v1.route("/analyze-proficiency", methods=["POST"])
 def analyze_proficiency():
+    # Extract the token from the Authorization header
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({"message": "Token is missing"}), 403
+
+    # Get the user ID from the token
+    session = db_client.auth.decode_token(token)
+    if session is None:
+        return jsonify({"message": "Invalid token"}), 403
+
+    # Get the user data from the Supabase Auth server
+    user = db_client.auth.get_user_by_id(session["user_id"])
+    if user is None:
+        return jsonify({"message": "User not found"}), 403
+
+    # Get the user ID from the user data
+    user_id = user["id"]
+
     # Get request data
     data = request.get_json()
 
     # Extract conversation history and user ID from request body
     conversation_history = data.get("conversation_history", [])
     language = data.get("language", "en")
-    user_id = data.get("user_id", "")
 
     # Call analyze proficiency function
     proficiency_level, feedback = analyze_proficiency(conversation_history, user_id, language)
