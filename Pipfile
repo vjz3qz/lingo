@@ -21,6 +21,7 @@ gunicorn = "*"
 pytest = "*"
 python-docx = "*"
 websockets = "*"
+jwt = "*"
 
 [dev-packages]
 
