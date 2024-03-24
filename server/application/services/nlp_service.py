@@ -15,7 +15,7 @@ def init_chat_model():
     Initialize chat model
     """
     logging.info("Initializing chat model")
-    return ChatOpenAI(temperature=0, model="gpt-4-0125-preview")
+    return ChatOpenAI(temperature=0.2, model="gpt-4-0125-preview")
 
 
 
