@@ -10,34 +10,19 @@ import ChatWrapper from "./pages/ChatWrapper";
 import Form from "./pages/Form";
 import Proficiency from "./pages/Proficiency";
 import Authentication from "./pages/Authentication";
-import { createClient } from "@supabase/supabase-js";
 
 function App() {
   const [session, setSession] = useState(null);
-
-  const supabase = createClient(
-    "https://ggqxyucbtqxzubhqavlk.supabase.co", // Use the environment variable for the URL
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdncXh5dWNidHF4enViaHFhdmxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTEyMTU1MjAsImV4cCI6MjAyNjc5MTUyMH0.UFUd28pIaBKzn-f0JH9fuoU0FkqifM7nDyQ9bWKtFOo" // Use the environment variable for the key
-  );
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/auth" />} />
         <Route
           path="/auth"
-          element={
-            <Authentication
-              supabase={supabase}
-              session={session}
-              setSession={setSession}
-            />
-          }
+          element={<Authentication session={session} setSession={setSession} />}
         />
         <Route path="/form" element={<Form session={session} />} />
-        <Route
-          path="/home"
-          element={<Home supabase={supabase} session={session} />}
-        />
+        <Route path="/home" element={<Home session={session} />} />
         <Route
           path="/chat/:language"
           element={<ChatWrapper session={session} />}

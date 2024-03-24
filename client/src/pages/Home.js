@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button, styled } from "@mui/material";
-import axios from "axios";
+import { supabase } from "../utils/SupabaseClient";
 
 // Language options
 const languages = ["Spanish", "German", "French"];
@@ -65,7 +65,7 @@ const LanguageOption = styled(Typography)({
   transition: "visibility 0s, opacity 0.5s linear",
 });
 
-function Home({ supabase, session }) {
+function Home({ session }) {
   const navigate = useNavigate();
 
   useEffect(() => {
