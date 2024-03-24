@@ -36,7 +36,8 @@ export default function Authentication({ session, setSession }) {
     return (
       <div
         style={{
-          width: "60%",
+          minWidth: "400px", // Set the minimum width to 400 pixels
+          width: "40%",
           position: "absolute",
           top: "50%",
           left: "50%",
