@@ -193,6 +193,21 @@ def get_proficiency_scores(language):
 # Audio endpoint
 @v1.route('/transcribe-audio', methods=['POST'])
 def transcribe_audio_endpoint():
+    # Extract the token from the Authorization header
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({"message": "Token is missing"}), 403
+
+    # Get the user ID from the token
+    session = db_client.auth.decode_token(token)
+    if session is None:
+        return jsonify({"message": "Invalid token"}), 403
+
+    # Get the user data from the Supabase Auth server
+    user = db_client.auth.get_user_by_id(session["user_id"])
+    if user is None:
+        return jsonify({"message": "User not found"}), 403
+
     if 'audio' not in request.files:
         return jsonify({"error": "No audio file provided"}), 400
 
