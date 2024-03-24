@@ -44,7 +44,7 @@ def update_user_in_db(user_id, name, previous_knowledge, interests):
     }
     
     try:
-        data, count = db_client.table("users").upsert(user_data, "id").execute()
+        data, count = db_client.table("users").upsert(user_data).execute()
         logging.info(f"User {user_id} updated successfully")
         return 200
     except Exception as e:
