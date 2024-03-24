@@ -9,7 +9,7 @@ import {
   ListItem,
   ListItemText,
   Grid,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
@@ -25,7 +25,7 @@ import {
 } from "recharts";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios'; // Ensure axios is imported
+import axios from "axios"; // Ensure axios is imported
 
 const drawerWidth = 240;
 
@@ -50,21 +50,33 @@ function ProficiencyPage({ session }) {
   // Function to fetch proficiency scores from the server
   const fetchProficiencyScores = async (language) => {
     try {
-      const response = await axios.get(`/api/v1/get-proficiency-scores/${language}`);
+      const response = await axios.get(
+        `/api/v1/get-proficiency-scores/${language}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
       if (response.status === 200) {
-        setProficiencyScores({ ...proficiencyScores, [language]: response.data.proficiency_scores });
+        setProficiencyScores({
+          ...proficiencyScores,
+          [language]: response.data.proficiency_scores,
+        });
       } else {
-        console.error('Failed to fetch data:', response.status);
+        console.error("Failed to fetch data:", response.status);
       }
     } catch (error) {
-      console.error('Error fetching proficiency scores:', error);
+      console.error("Error fetching proficiency scores:", error);
     }
   };
 
   const selectedData = proficiencyScores[selectedLanguage] || []; // Fallback to an empty array
   const mostRecentData = selectedData[selectedData.length - 1] || {};
   const mostRecentScore = mostRecentData.y || 0;
-  const highestScore = selectedData.length ? Math.max(...selectedData.map((s) => s.y)) : 0;
+  const highestScore = selectedData.length
+    ? Math.max(...selectedData.map((s) => s.y))
+    : 0;
   const mostRecentFeedback = mostRecentData.feedback || "No data available";
 
   // Function to determine speaker level
