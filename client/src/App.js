@@ -10,10 +10,6 @@ function App() {
   const [session, setSession] = useState(null);
   return (
     <Router>
-      {/* <AuthProvider>
-      </AuthProvider> */}
-
-      {/* Wrap routes inside AuthProvider */}
       <Routes>
         <Route
           path="/auth"
