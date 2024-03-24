@@ -121,7 +121,7 @@ function Home({ session }) {
   return (
     <FullScreenContainer>
       <Typography variant="h3" gutterBottom>
-        Welcome, User
+        Welcome to Lingo!
       </Typography>
       <LanguageButton ref={languageButtonRef} onClick={handleStartConversation}>
         {languages.map((language, index) => (

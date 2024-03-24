@@ -100,6 +100,8 @@ function LanguageLearningForm({ session }) {
         general: errorMessage,
       }));
     }
+
+    
   };
 
   return (
@@ -197,6 +199,21 @@ function LanguageLearningForm({ session }) {
               }}
             >
               Submit Profile
+            </Button>
+            {/* Add this Button to go back to the home page */}
+            <Button
+                variant="contained"
+                color="secondary"
+                onClick={navigate("/home")}
+                sx={{
+                bgcolor: "primary.main",
+                "&:hover": {
+                    bgcolor: "primary.dark",
+                },
+                ml: 2, // Add some left margin to separate it from the submit button
+                }}
+            >
+                Go to Home
             </Button>
           </Box>
         </form>

@@ -108,7 +108,7 @@ function ProficiencyPage({ session }) {
         </List>
       </Drawer>
       <Container component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBotto align="center">
           Language Proficiency: {selectedLanguage}
         </Typography>
         <Grid container spacing={3}>
