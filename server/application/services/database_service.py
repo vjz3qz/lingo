@@ -41,8 +41,8 @@ def signup_user(email, password):
 
         logging.info(f"User {email} signed up successfully")
         return 200, session
-    except:
-        logging.error(f"Failed to sign up user.")
+    except Exception as e:
+        logging.error(f"Failed to sign up user: {e}")
         return 500, None
 
 def login_user(email, password):
@@ -58,8 +58,8 @@ def login_user(email, password):
 
         logging.info(f"User {email} logged in successfully")
         return 200, session
-    except:
-        logging.error(f"Failed to log in user.")
+    except Exception as e:
+        logging.error(f"Failed to log in user: {e}")
         return 500, None
 
 def logout_user():
@@ -72,8 +72,8 @@ def logout_user():
         response = db_client.auth.sign_out()
         logging.info("User logged out successfully")
         return 200
-    except:
-        logging.error(f"Failed to log out user.")
+    except Exception as e:
+        logging.error(f"Failed to log out user: {e}")
         return 500
 
 def create_user_in_db(name, previous_knowledge, interests):
@@ -92,8 +92,8 @@ def create_user_in_db(name, previous_knowledge, interests):
         data, count = db_client.table("users").insert(user_data).execute()
         logging.info(f"User {name} created successfully")
         return 200
-    except:
-        logging.error(f"Failed to create user: {data, count}")
+    except Exception as e:
+        logging.error(f"Failed to create user: {e}")
         return 500
 
 
@@ -117,8 +117,8 @@ def update_user_in_db(user_id, name, previous_knowledge, interests):
         data, count = db_client.table("users").update(user_data).eq("id", user_id).execute()
         logging.info(f"User {user_id} updated successfully")
         return 200
-    except:
-        logging.error(f"Failed to update user: {data, count}")
+    except Exception as e:
+        logging.error(f"Failed to update user: {e}")
         return 500
 
 
@@ -141,8 +141,8 @@ def create_proficiency_record(user_id, language, proficiency_level, feedback):
         data, count = db_client.table("proficiency").insert(proficiency_data).execute()
         logging.info(f"Proficiency record created successfully")
         return 200
-    except:
-        logging.error(f"Failed to create proficiency record: {data, count}")
+    except Exception as e:
+        logging.error(f"Failed to create proficiency record: {e}")
         return 500
 
 
@@ -155,8 +155,8 @@ def get_user_data(user_id):
         # Query user data from Supabase
         response = db_client.table("users").select("*").eq("name", user_id).execute()
         # TODO: parse response
-    except:
-        logging.error(f"Failed to get user data: {response}")
+    except Exception as e:
+        logging.error(f"Failed to get user data: {e}")
         return None, None, None
 
 
@@ -165,18 +165,12 @@ def get_user_last_proficiency_by_language(user_id, language):
     Get the last proficiency record for a user in a specific language
     """
     logging.info(f"Getting last proficiency record for user: {user_id} in language: {language}")
-    
-    # Query proficiency records from Supabase
-    response = db_client.table("proficiency").select("*").eq("user_id", user_id).order("timestamp", ascending=False).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to get proficiency records: {response['error']}")
-        return None, None
-    else:
-        proficiency_records = response["data"]
-        for record in proficiency_records:
-            if record["language"] == language:
-                return record["proficiency_level"], record["feedback"]
+    try:
+        # Query proficiency records from Supabase
+        response = db_client.table("proficiency").select("*").eq("user_id", user_id).order("timestamp", ascending=False).execute()
+        # TODO return
+    except Exception as e:
+        logging.error(f"Failed to get last proficiency record: {e}")
         return None, None
 
 def get_user_proficiency_scores_by_language(user_id, language):
@@ -184,14 +178,10 @@ def get_user_proficiency_scores_by_language(user_id, language):
     Get all proficiency scores for a user in a specific language
     """
     logging.info(f"Getting proficiency scores for user: {user_id} in language: {language}")
-    
-    # Query proficiency records from Supabase
-    response = db_client.table("proficiency").select("proficiency_level").eq("user_id", user_id).eq("language", language).order("timestamp", ascending=False).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to get proficiency scores: {response['error']}")
-        return []
-    else:
-        proficiency_scores = [(record["timestamp"], record["proficiency_level"]) for record in response["data"]]
-        return proficiency_scores, response["data"][0]["feedback"]
-
+    try:
+        # Query proficiency records from Supabase
+        response = db_client.table("proficiency").select("proficiency_level").eq("user_id", user_id).eq("language", language).order("timestamp", ascending=False).execute()
+        # TODO return
+    except Exception as e:
+        logging.error(f"Failed to get proficiency scores: {e}")
+        return None, None

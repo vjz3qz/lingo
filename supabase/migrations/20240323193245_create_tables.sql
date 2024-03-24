@@ -1,10 +1,11 @@
 -- Create Users table
 CREATE TABLE
     users (
-        id UUID PRIMARY KEY,
+        id uuid not null references auth.users on delete cascade,
         name TEXT NOT NULL,
         previous_knowledge TEXT NOT NULL,
-        interests TEXT NOT NULL
+        interests TEXT NOT NULL,
+        primary key (id)
     );
 
 -- Create Previous Proficiency Feedback table
