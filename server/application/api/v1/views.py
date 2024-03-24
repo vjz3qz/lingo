@@ -18,10 +18,6 @@ from flask import current_app
 
 v1 = Blueprint('v1', __name__)
 
-@v1.route("health", methods=["GET"])
-def health():
-    return jsonify({"message": "API is running"})
-
 # create user endpoint
 @v1.route("/create-user", methods=["POST"])
 def create_user():
