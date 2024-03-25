@@ -1,5 +1,5 @@
 // Chat.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ChatBubble from "../ui/ChatBubble";
 import ChatInputBar from "../subcomponents/ChatInputBar";
 import axios from "axios";
@@ -7,8 +7,88 @@ import axios from "axios";
 const Chat = ({ language, session }) => {
   const [messages, setMessages] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [audioChunks, setAudioChunks] = useState([]);
+  // const [recordingCompleted, setRecordingCompleted] = useState(false);
+  // const [audioUrl, setAudioUrl] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+
+  const startRecording = async () => {
+    if (isRecording) return;
+    // Request permission to access the microphone
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+      // setRecordingCompleted(false);
+    } catch (err) {
+      // Handle the error case
+      console.error("Could not start recording", err);
+    }
+  };
+
+  const stopRecording = async () => {
+    // Stop the media recorder
+    mediaRecorderRef.current.stop();
+    setIsRecording(false);
+
+    // Stop each track in the media stream
+    mediaRecorderRef.current.stream
+      .getTracks()
+      .forEach((track) => track.stop());
+
+    // Handler for when recording is stopped
+    mediaRecorderRef.current.onstop = async () => {
+      const audioRecording = new Blob(audioChunksRef.current, {
+        type: "audio/mpeg",
+      });
+      // const audioUrl = URL.createObjectURL(audioRecording);
+      // setAudioUrl(audioUrl);
+      setAudioBlob(audioRecording);
+      // setRecordingCompleted(true);
+
+      // Reset the chunks array for future recordings
+      audioChunksRef.current = [];
+    };
+    mediaRecorderRef.current = null;
+  };
+
+  // Add useEffect to watch audioBlob changes
+  useEffect(() => {
+    if (audioBlob) {
+      transcribeAudio();
+    }
+  }, [audioBlob]); // This useEffect depends on audioBlob
+
+  const transcribeAudio = async () => {
+    // Send audio to the backend
+    // Ensure audioBlob is not null
+    if (!audioBlob) return;
+
+    try {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "user_audio.wav");
+
+      const response = await axios.post("/api/v1/transcribe-audio", formData, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = response.data;
+      handleReceivedTranscription(data.transcription);
+    } catch (error) {
+      console.error("Error sending audio:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,32 +113,6 @@ const Chat = ({ language, session }) => {
     fetchData();
   }, []);
 
-  const startRecording = async () => {
-    if (isRecording) return;
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      recorder.ondataavailable = (event) => {
-        setAudioChunks((currentChunks) => [...currentChunks, event.data]);
-      };
-      recorder.onstop = handleRecordingStop; // Attach handleRecordingStop to onstop event
-      recorder.start();
-
-      setMediaRecorder(recorder);
-      setIsRecording(true);
-    } catch (error) {
-      console.error("Error starting recording:", error);
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop(); // This will trigger the onstop event and call handleRecordingStop
-      setIsRecording(false);
-    }
-  };
-
   // Handle transcription result
   async function handleReceivedTranscription(transcribedText) {
     const payload = {
@@ -66,12 +120,18 @@ const Chat = ({ language, session }) => {
       language: language,
       conversation_history: messages.map((m) => m.content),
     };
-    const result = await axios.post("/api/v1/chat", payload, {
+    const response = await axios.post("/api/v1/chat", payload, {
       headers: {
         Authorization: `Bearer ${session.access_token}`,
       },
     });
-    const responseMessage = result.data.response;
+
+    if (!response.ok) {
+      console.error(`Error: ${response.statusText}`);
+      return;
+    }
+
+    const responseMessage = response.data.response;
 
     setMessages([
       ...messages,
@@ -79,31 +139,6 @@ const Chat = ({ language, session }) => {
       { text: responseMessage, isUserMessage: false },
     ]);
   }
-
-  const handleRecordingStop = async () => {
-    const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-    setAudioChunks([]);
-
-    try {
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "user_audio.wav");
-
-      const response = await axios.post("/api/v1/transcribe-audio", formData, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      const data = response.data;
-      handleReceivedTranscription(data.transcription);
-    } catch (error) {
-      console.error("Error sending audio:", error);
-    }
-  };
 
   // Render Functions
   const ChatBubbles = () => {
@@ -130,6 +165,7 @@ const Chat = ({ language, session }) => {
       <main className={`main-content ${"show-chat"}`}>
         <ChatBubbles />
       </main>
+
       <div className={`bottom-container ${"half-width"}`}>
         <div className="action-buttons"></div>
         <ChatInputBar
