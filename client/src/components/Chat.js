@@ -201,6 +201,7 @@ const Chat = ({ language, session }) => {
           handleStartRecording={startRecording}
           handleRecordingStop={stopRecording}
           isRecording={isRecording}
+          handleAnalyze={handleAnalyze}
         />
       </div>
     </div>
