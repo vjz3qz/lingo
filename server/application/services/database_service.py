@@ -1,6 +1,7 @@
 from supabase.client import Client, create_client
 import os
 import logging
+import uuid
 
 # Environment setup
 try:
