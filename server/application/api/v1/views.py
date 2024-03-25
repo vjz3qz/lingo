@@ -11,7 +11,7 @@ from application.controllers.chat_controller import (
     analyze_proficiency,
 )
 from application.services.database_service import update_user_in_db, get_user_data, get_user_proficiency_scores_by_language
-from application.services.nlp_service import transcribe_audio
+from application.services.nlp_service import transcribe_audio_file
 from application.services.auth_service import get_user_id
 
 @v1.route("/health", methods=["GET"])
