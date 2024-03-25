@@ -1,5 +1,6 @@
 // Chat.js
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import ChatBubble from "../ui/ChatBubble";
 import ChatInputBar from "../subcomponents/ChatInputBar";
 import axios from "axios";
@@ -12,6 +13,8 @@ const Chat = ({ language, session }) => {
   const [audioBlob, setAudioBlob] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const startRecording = async () => {
     if (isRecording) return;
@@ -147,6 +150,25 @@ const Chat = ({ language, session }) => {
     setMessages([...messages, { text: responseMessage, isUserMessage: false }]);
   }
 
+  const handleAnalyze = async () => {
+    const payload = {
+      language: language,
+      conversation_history: messages,
+    };
+    const response = await axios.post("/api/v1/analyze-proficiency", payload, {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (response.status !== 200) {
+      console.error(`Error: ${response.statusText}`);
+      return;
+    }
+
+    navigate("/proficiency");
+  };
+
   // Render Functions
   const ChatBubbles = () => {
     return (
@@ -177,7 +199,7 @@ const Chat = ({ language, session }) => {
         <div className="action-buttons"></div>
         <ChatInputBar
           handleStartRecording={startRecording}
-          handleRecordingStop={stopRecording} // This should match what you define in ChatInputBar props
+          handleRecordingStop={stopRecording}
           isRecording={isRecording}
         />
       </div>

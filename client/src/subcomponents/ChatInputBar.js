@@ -10,6 +10,7 @@ function ChatInputBar({
   handleStartRecording,
   handleRecordingStop,
   isRecording,
+  handleAnalyze,
 }) {
   const navigate = useNavigate(); // Initialize useNavigate hook
 
@@ -54,7 +55,7 @@ function ChatInputBar({
 
       <IconButton
         color="primary"
-        onClick={() => navigate("/proficiency")} // Navigate to proficiency page
+        onClick={handleAnalyze} // Navigate to proficiency page
         aria-label="go to proficiency page"
       >
         <AssessmentIcon fontSize="large" />
