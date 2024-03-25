@@ -64,6 +64,7 @@ def analyze_conversation_proficiency(conversation_history, user_id, language):
             "name": name,
             "interests": interests,
             "previous_proficiency_feedback": previous_proficiency_feedback,
+            "previous_proficiency_score": previous_proficiency_score,
             "messages": conversation_history,
         }
     )
