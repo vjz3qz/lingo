@@ -112,7 +112,7 @@ const Chat = ({ language, session }) => {
           Authorization: `Bearer ${session.access_token}`,
         },
       });
-      console.log(response);
+
       if (response.status !== 200) {
         throw new Error(`Error: ${response.statusText}`);
       }
