@@ -166,17 +166,9 @@ def transcribe_audio_endpoint():
         return jsonify({"error": "No audio file provided"}), 400
 
     audio_file = request.files['audio']
-    filename = secure_filename(audio_file.filename)
-    audio_file_path = os.path.join(current_app.root_path, '..', '..', 'audioFiles', filename)
     try:
-        # Make sure the directory exists, if not, create it
-        os.makedirs(os.path.dirname(audio_file_path), exist_ok=True)
-        # Save the audio file
-        audio_file.save(audio_file_path)
-        # Transcription service logic here
-        transcription_text = transcribe_audio(audio_file_path)
-        # Clean up if needed, then send response
+        transcription_text = transcribe_audio_file(audio_file)
         return jsonify({"transcription": transcription_text})
     except Exception as e:
-        current_app.logger.error(f"Error processing audio file: {e}")
+        logger.error(f"Error processing audio file: {e}")
         return jsonify({"error": "Failed to process audio file"}), 500
