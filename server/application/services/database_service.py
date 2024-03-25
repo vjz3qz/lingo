@@ -1,8 +1,6 @@
 from supabase.client import Client, create_client
 import os
 import logging
-import uuid
-from datetime import datetime
 
 # Environment setup
 try:
@@ -62,8 +60,6 @@ def create_proficiency_record(user_id, language, proficiency_level, feedback):
     
     # Upload proficiency record to Supabase
     proficiency_data = {
-        "id": str(uuid.uuid4()),  # Generate a new UUID for the record
-        "date": datetime.now(),  # Use current datetime
         "user_id": user_id,
         "language": language,
         "proficiency_level": proficiency_level,
