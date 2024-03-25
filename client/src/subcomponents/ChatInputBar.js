@@ -6,20 +6,24 @@ import HomeIcon from "@mui/icons-material/Home"; // Import Home icon
 import AssessmentIcon from "@mui/icons-material/Assessment"; // Import Proficiency icon
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
-function ChatInputBar({ handleStartRecording, handleRecordingStop, isRecording }) {
+function ChatInputBar({
+  handleStartRecording,
+  handleRecordingStop,
+  isRecording,
+}) {
   const navigate = useNavigate(); // Initialize useNavigate hook
 
   return (
     <Box
       sx={{
-        width: '100%',
-        position: 'fixed',
+        width: "100%",
+        position: "fixed",
         bottom: 0,
         left: 0,
         p: 2,
-        backgroundColor: 'background.paper',
-        display: 'flex',
-        justifyContent: 'space-evenly', // Adjust to space-evenly for even spacing
+        backgroundColor: "background.paper",
+        display: "flex",
+        justifyContent: "space-evenly", // Adjust to space-evenly for even spacing
       }}
     >
       <IconButton
@@ -55,8 +59,6 @@ function ChatInputBar({ handleStartRecording, handleRecordingStop, isRecording }
       >
         <AssessmentIcon fontSize="large" />
       </IconButton>
-
-      
     </Box>
   );
 }
