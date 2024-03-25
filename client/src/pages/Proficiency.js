@@ -33,21 +33,19 @@ function ProficiencyPage({ session }) {
   const navigate = useNavigate();
   const [selectedLanguage, setSelectedLanguage] = useState("spanish");
   const [proficiencyScores, setProficiencyScores] = useState({}); // State to store proficiency scores
-  console.log(proficiencyScores);
   // {
   //   "Spanish": [
-  //     { "y": 80, "feedback": "Good job!" },
-  //     { "y": 90, "feedback": "Excellent!" },
+  //     { "y": 80, "feedback": "Good job!", "datetime": '2024-03-25T23:36:48.03246+00:00' },
+  //     { "y": 90, "feedback": "Excellent!", "datetime": '2024-03-25T23:36:48.03246+00:00' },
   //     // ...
   //   ],
   //   "German": [
-  //     { "y": 70, "feedback": "Well done!" },
-  //     { "y": 85, "feedback": "Great!" },
+  //     { "y": 70, "feedback": "Well done!, "datetime": '2024-03-25T23:36:48.03246+00:00'" },
+  //     { "y": 85, "feedback": "Great!", "datetime": '2024-03-25T23:36:48.03246+00:00' },
   //     // ...
   //   ],
   //   // ...
   // }
-
   useEffect(() => {
     if (!session) {
       navigate("/auth");
@@ -122,7 +120,7 @@ function ProficiencyPage({ session }) {
         }}
       >
         <List>
-          {["Spanish", "German", "French"].map((language) => (
+          {["spanish", "german", "french"].map((language) => (
             <ListItem
               button
               key={language}
