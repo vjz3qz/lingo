@@ -170,5 +170,5 @@ def transcribe_audio_endpoint():
         transcription_text = transcribe_audio_file(audio_file)
         return jsonify({"transcription": transcription_text})
     except Exception as e:
-        logger.error(f"Error processing audio file: {e}")
+        logging.error(f"Error processing audio file: {e}")
         return jsonify({"error": "Failed to process audio file"}), 500

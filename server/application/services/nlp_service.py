@@ -1,7 +1,7 @@
 import os
 import logging
 from langchain_openai import ChatOpenAI
-import openai
+from openai import OpenAI
 import tempfile
 
 # A mapping from MIME types to file extensions
@@ -50,6 +50,7 @@ def transcribe_audio_file(audio_file):
         ) as temp_file:
             audio_file.save(temp_file.name)
             with open(temp_file.name, "rb") as file_to_transcribe:
+                client = OpenAI(api_key=openai_api_key)
                 transcript = client.audio.transcriptions.create(
                     model="whisper-1", file=file_to_transcribe, response_format="text"
                 )
