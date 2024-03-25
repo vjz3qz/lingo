@@ -95,12 +95,15 @@ def chat():
     # Extract conversation history and user ID from request body
     conversation_history = data.get("conversation_history", [])
     language = data.get("language", "en")
+    try:
+        # Call chat controller to get chat response
+        response = get_chat_response(conversation_history, user_id, language)
 
-    # Call chat controller to get chat response
-    response = get_chat_response(conversation_history, user_id, language)
-
-    # Return the chat response
-    return jsonify({"response": response})
+        # Return the chat response
+        return jsonify({"response": response}), 200
+    except Exception as e:
+        logging.error(f"Error processing chat request: {e}")
+        return jsonify({"error": "Failed to process chat request"}), 500
 
 
 # analyze proficiency endpoint

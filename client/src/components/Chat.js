@@ -57,39 +57,6 @@ const Chat = ({ language, session }) => {
     mediaRecorderRef.current = null;
   };
 
-  // Add useEffect to watch audioBlob changes
-  useEffect(() => {
-    if (audioBlob) {
-      transcribeAudio();
-    }
-  }, [audioBlob]); // This useEffect depends on audioBlob
-
-  const transcribeAudio = async () => {
-    // Send audio to the backend
-    // Ensure audioBlob is not null
-    if (!audioBlob) return;
-
-    try {
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "user_audio.wav");
-
-      const response = await axios.post("/api/v1/transcribe-audio", formData, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      const data = response.data;
-      handleReceivedTranscription(data.transcription);
-    } catch (error) {
-      console.error("Error sending audio:", error);
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       const payload = {
@@ -113,12 +80,56 @@ const Chat = ({ language, session }) => {
     fetchData();
   }, []);
 
+  // Add useEffect to watch audioBlob changes
+  useEffect(() => {
+    if (audioBlob) {
+      transcribeAudio();
+    }
+  }, [audioBlob]); // This useEffect depends on audioBlob
+
+  useEffect(() => {
+    if (messages.length === 0) return;
+    const lastUserMessage = messages[messages.length - 1].isUserMessage;
+    if (lastUserMessage) {
+      handleReceivedTranscription();
+    }
+  }, [messages]);
+
+  const transcribeAudio = async () => {
+    // Send audio to the backend
+    // Ensure audioBlob is not null
+    if (!audioBlob) return;
+
+    try {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "user_audio.wav");
+
+      const response = await axios.post("/api/v1/transcribe-audio", formData, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+      console.log(response);
+      if (response.status !== 200) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = response.data;
+
+      setMessages([
+        ...messages,
+        { text: data.transcription, isUserMessage: true },
+      ]);
+    } catch (error) {
+      console.error("Error sending audio:", error);
+    }
+  };
+
   // Handle transcription result
-  async function handleReceivedTranscription(transcribedText) {
+  async function handleReceivedTranscription() {
     const payload = {
-      user_message: transcribedText.trim(),
       language: language,
-      conversation_history: messages.map((m) => m.content),
+      conversation_history: messages,
     };
     const response = await axios.post("/api/v1/chat", payload, {
       headers: {
@@ -126,18 +137,14 @@ const Chat = ({ language, session }) => {
       },
     });
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       console.error(`Error: ${response.statusText}`);
       return;
     }
 
     const responseMessage = response.data.response;
 
-    setMessages([
-      ...messages,
-      { text: transcribedText, isUserMessage: true },
-      { text: responseMessage, isUserMessage: false },
-    ]);
+    setMessages([...messages, { text: responseMessage, isUserMessage: false }]);
   }
 
   // Render Functions
