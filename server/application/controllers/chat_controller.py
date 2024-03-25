@@ -71,13 +71,18 @@ def analyze_conversation_proficiency(conversation_history, user_id, language):
 
     response_text = response.content
 
-    # Parse the response to get the proficiency score and feedback
-    lines = response_text.split('\n')
-    proficiency_score = int(lines[0].split(': ')[1])
-    feedback = lines[1].split(': ')[1]
+    print(response_text)
+    try:
+        # Parse the response to get the proficiency score and feedback
+        lines = response_text.split('\n')
+        proficiency_score = int(lines[0].split(': ')[1])
+        feedback = lines[1].split(': ')[1]
 
-    create_proficiency_record(user_id, language, proficiency_score, feedback)
-    return proficiency_score, feedback
+        create_proficiency_record(user_id, language, proficiency_score, feedback)
+        return proficiency_score, feedback
+    except Exception as e:
+        logging.error(f"Failed to analyze proficiency: {e}")
+        return None, None
 
 
 
