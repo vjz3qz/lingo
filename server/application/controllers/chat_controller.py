@@ -36,7 +36,7 @@ def get_chat_response(conversation_history, user_id, language):
 
 
 
-def analyze_proficiency(conversation_history, user_id, language):
+def analyze_conversation_proficiency(conversation_history, user_id, language):
     conversation_history = parse_conversation(conversation_history)
     name, previous_knowledge, interests = get_user_data(user_id)
     previous_proficiency_score, previous_proficiency_feedback = get_user_last_proficiency_by_language(user_id, language)

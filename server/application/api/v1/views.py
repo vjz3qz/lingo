@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 
 from application.controllers.chat_controller import (
     get_chat_response,
-    analyze_proficiency,
+    analyze_conversation_proficiency
 )
 from application.services.database_service import update_user_in_db, get_user_data, get_user_proficiency_scores_by_language
 from application.services.nlp_service import transcribe_audio_file
@@ -127,7 +127,7 @@ def analyze_proficiency():
     language = data.get("language", "en")
     try:
         # Call analyze proficiency function
-        proficiency_level, feedback = analyze_proficiency(conversation_history, user_id, language)
+        proficiency_level, feedback = analyze_conversation_proficiency(conversation_history, user_id, language)
 
         # Return the proficiency analysis response
         return jsonify({"proficiency_level": proficiency_level, "feedback": feedback}), 200
