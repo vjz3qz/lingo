@@ -31,9 +31,9 @@ const drawerWidth = 240;
 
 function ProficiencyPage({ session }) {
   const navigate = useNavigate();
-  const [selectedLanguage, setSelectedLanguage] = useState("Spanish");
+  const [selectedLanguage, setSelectedLanguage] = useState("spanish");
   const [proficiencyScores, setProficiencyScores] = useState({}); // State to store proficiency scores
-
+  console.log(proficiencyScores);
   // {
   //   "Spanish": [
   //     { "y": 80, "feedback": "Good job!" },

@@ -4,7 +4,7 @@ import { Box, Typography, Button, styled } from "@mui/material";
 import { supabase } from "../utils/SupabaseClient";
 
 // Language options
-const languages = ["Spanish", "German", "French"];
+const languages = ["spanish", "german", "french"];
 
 const FullScreenContainer = styled(Box)({
   height: "100vh",
