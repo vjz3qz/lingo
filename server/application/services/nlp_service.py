@@ -20,7 +20,7 @@ def init_chat_model():
 
 
 
-from openai import OpenAI
+import openai
 
 def transcribe_audio(audio_file_path):
     """
@@ -28,12 +28,9 @@ def transcribe_audio(audio_file_path):
     :param audio_file_path: Path to the audio file to be transcribed.
     :return: The transcribed text.
     """
-    with open(audio_file_path, 'rb') as audio_file:
-        # Make sure to check OpenAI's official documentation
-        # for the correct method to transcribe audio
-        client = OpenAI(openai_api_key)
-        transcription = client.audio.transcriptions.create(audio_file)
-        return transcription['text']
+    audio_file = open(audio_file_path, "rb")
+    transcription = openai.Audio.transcribe("whisper-1", audio_file)
+    return transcription['text']
 
 
 
