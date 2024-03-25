@@ -2,6 +2,7 @@ from supabase.client import Client, create_client
 import os
 import logging
 import uuid
+from datetime import datetime
 
 # Environment setup
 try:
