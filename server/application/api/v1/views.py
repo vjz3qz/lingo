@@ -125,12 +125,15 @@ def analyze_proficiency():
     # Extract conversation history and user ID from request body
     conversation_history = data.get("conversation_history", [])
     language = data.get("language", "en")
+    try:
+        # Call analyze proficiency function
+        proficiency_level, feedback = analyze_proficiency(conversation_history, user_id, language)
 
-    # Call analyze proficiency function
-    proficiency_level, feedback = analyze_proficiency(conversation_history, user_id, language)
-
-    # Return the proficiency analysis response
-    return jsonify({"proficiency_level": proficiency_level, "feedback": feedback})
+        # Return the proficiency analysis response
+        return jsonify({"proficiency_level": proficiency_level, "feedback": feedback}), 200
+    except Exception as e:
+        logging.error(f"Error processing proficiency analysis request: {e}")
+        return jsonify({"error": "Failed to process proficiency analysis request"}), 500
 
 
 
