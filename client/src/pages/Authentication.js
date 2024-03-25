@@ -40,7 +40,11 @@ export default function Authentication({ session, setSession }) {
           padding: "10px",
         }}
       >
-        <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+        <Auth
+          supabaseClient={supabase}
+          appearance={{ theme: ThemeSupa }}
+          providers={[]}
+        />
       </div>
     );
   } else {
