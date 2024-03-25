@@ -129,7 +129,6 @@ def get_user_proficiency_scores_by_language(user_id, language):
         data, count = db_client.table("previous_proficiency_feedback").select("proficiency_level", "feedback", "timestamp").eq("user_id", user_id).eq("language", language).execute()
         data = data[1]
         count = count[1]
-        print(data) # TODO check when there is data
         proficiency_scores = []
         for record in data:
             proficiency_scores.append({
