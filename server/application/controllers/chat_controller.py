@@ -1,6 +1,6 @@
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder
 from application.services.database_service import db_client, get_user_data, get_user_last_proficiency_by_language, create_proficiency_record
-from application.services.nlp_service import chat_model
+from application.services.nlp_service import chat_model, analysis_model
 from application.utils.parse_conversation import parse_conversation
 import logging
 
@@ -44,9 +44,9 @@ def analyze_conversation_proficiency(conversation_history, user_id, language):
                     This is their previous proficiency level in {language}: {previous_proficiency_score}
                     This is their previous proficiency feedback in {language}: {previous_proficiency_feedback}
                     Analyze {name}'s proficiency in {language} based on the conversation history, providing 
-                    insightful and constructive feedback and an updated proficiency score. The updated proficiency 
-                    score should be an integer. If there was no previous proficiency score, provide a proficiency 
-                    score based on the conversation history, starting from 0.
+                    insightful and constructive feedback and an updated proficiency score. Please provide the feedback in english.
+                    The updated proficiency score should be an integer. If there was no previous proficiency score, provide a 
+                    proficiency score based on the conversation history, starting from 0.
 
                     Your response should be in the following format:
                     Proficiency Score: [score]
@@ -56,7 +56,7 @@ def analyze_conversation_proficiency(conversation_history, user_id, language):
     system_message_prompt = SystemMessagePromptTemplate.from_template(template)
     prompt = ChatPromptTemplate.from_messages([system_message_prompt, MessagesPlaceholder(variable_name="messages")])
 
-    chain = prompt | chat_model
+    chain = prompt | analysis_model
 
     response = chain.invoke(
         {

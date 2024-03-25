@@ -28,7 +28,12 @@ def init_chat_model():
     return ChatOpenAI(temperature=0.2, model="gpt-4-0125-preview")
 
 
-
+def init_analysis_model():
+    """
+    Initialize analysis model
+    """
+    logging.info("Initializing analysis model")
+    return ChatOpenAI(temperature=0, model="gpt-4-0125-preview")
 
 
 def transcribe_audio_file(audio_file):
@@ -65,4 +70,5 @@ def transcribe_audio_file(audio_file):
 
 
 chat_model = init_chat_model()
+analysis_model = init_analysis_model()
 
