@@ -1,7 +1,8 @@
 # TODOs
 
 - [x] Add user authentication
-- [ ] Integrate/test backend with frontend: check proficiency
+- [x] Integrate/test backend with frontend
+- [ ] Deploy
 - [ ] Add react markdown to chat
 - [ ] Websockets for real-time chat/transcription
 - [ ] Uniform UI
