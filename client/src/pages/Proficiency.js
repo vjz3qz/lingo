@@ -32,20 +32,8 @@ const drawerWidth = 240;
 function ProficiencyPage({ session }) {
   const navigate = useNavigate();
   const [selectedLanguage, setSelectedLanguage] = useState("spanish");
-  const [proficiencyScores, setProficiencyScores] = useState({}); // State to store proficiency scores
-  // {
-  //   "Spanish": [
-  //     { "y": 80, "feedback": "Good job!", "datetime": '2024-03-25T23:36:48.03246+00:00' },
-  //     { "y": 90, "feedback": "Excellent!", "datetime": '2024-03-25T23:36:48.03246+00:00' },
-  //     // ...
-  //   ],
-  //   "German": [
-  //     { "y": 70, "feedback": "Well done!, "datetime": '2024-03-25T23:36:48.03246+00:00'" },
-  //     { "y": 85, "feedback": "Great!", "datetime": '2024-03-25T23:36:48.03246+00:00' },
-  //     // ...
-  //   ],
-  //   // ...
-  // }
+  const [proficiencyScores, setProficiencyScores] = useState({});
+
   useEffect(() => {
     if (!session) {
       navigate("/auth");
@@ -161,13 +149,16 @@ function ProficiencyPage({ session }) {
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
-                    dataKey="datetime"
+                    dataKey="timestamp"
                     angle={-45}
                     textAnchor="end"
                     tick={{ fontSize: 10 }}
-                    tickFormatter={(datetime) =>
-                      moment(datetime).format("YYYY-MM-DD HH:mm")
-                    }
+                    tickFormatter={(timestamp) => {
+                      return moment(
+                        timestamp,
+                        "YYYY-MM-DDTHH:mm:ss.SSSSSZ"
+                      ).format("YYYY-MM-DD HH:mm");
+                    }}
                     height={70}
                   />
                   <YAxis
@@ -176,9 +167,12 @@ function ProficiencyPage({ session }) {
                     domain={["auto", "auto"]}
                   />
                   <Tooltip
-                    labelFormatter={(label) =>
-                      moment(label).format("YYYY-MM-DD HH:mm")
-                    }
+                    tickFormatter={(timestamp) => {
+                      return moment(
+                        timestamp,
+                        "YYYY-MM-DDTHH:mm:ss.SSSSSZ"
+                      ).format("YYYY-MM-DD HH:mm");
+                    }}
                   />
                   <Legend />
                   <Line
