@@ -6,6 +6,13 @@ import ChatInputBar from "../subcomponents/ChatInputBar";
 import axios from "axios";
 
 const Chat = ({ language, session }) => {
+  const accessTokenRef = useRef(session.access_token);
+
+  // Update the ref whenever the token changes
+  useEffect(() => {
+    accessTokenRef.current = session.access_token;
+  }, [session.access_token]);
+
   const [messages, setMessages] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
   // const [recordingCompleted, setRecordingCompleted] = useState(false);
@@ -60,95 +67,78 @@ const Chat = ({ language, session }) => {
     mediaRecorderRef.current = null;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const payload = {
-        user_message: "",
-        language: language,
-        conversation_history: [],
-      };
-      const result = await axios.post("/api/v1/chat", payload, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-      const responseMessage = result.data.response;
-
-      setMessages([
-        ...messages,
-        { text: responseMessage, isUserMessage: false },
-      ]);
-    };
-
-    fetchData();
-  }, []);
-
   // Add useEffect to watch audioBlob changes
   useEffect(() => {
+    async function transcribeAudio() {
+      // Send audio to the backend
+      // Ensure audioBlob is not null
+      if (!audioBlob) return;
+
+      try {
+        const formData = new FormData();
+        formData.append("audio", audioBlob, "user_audio.wav");
+
+        const response = await axios.post(
+          "/api/v1/transcribe-audio",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${accessTokenRef.current}`,
+            },
+          }
+        );
+
+        if (response.status !== 200) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const data = response.data;
+
+        setMessages((currentMessages) => [
+          ...currentMessages,
+          { text: data.transcription, isUserMessage: true },
+        ]);
+      } catch (error) {
+        console.error("Error sending audio:", error);
+      }
+    }
     if (audioBlob) {
       transcribeAudio();
     }
   }, [audioBlob]); // This useEffect depends on audioBlob
 
   useEffect(() => {
-    if (messages.length === 0) return;
-    const lastUserMessage = messages[messages.length - 1].isUserMessage;
-    if (lastUserMessage) {
-      handleReceivedTranscription();
-    }
-  }, [messages]);
-
-  const transcribeAudio = async () => {
-    // Send audio to the backend
-    // Ensure audioBlob is not null
-    if (!audioBlob) return;
-
-    try {
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "user_audio.wav");
-
-      const response = await axios.post("/api/v1/transcribe-audio", formData, {
+    // Handle transcription result
+    async function handleReceivedTranscription() {
+      const payload = {
+        language: language,
+        conversation_history: messages,
+      };
+      const response = await axios.post("/api/v1/chat", payload, {
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${accessTokenRef.current}`,
         },
       });
 
       if (response.status !== 200) {
-        throw new Error(`Error: ${response.statusText}`);
+        console.error(`Error: ${response.statusText}`);
+        return;
       }
 
-      const data = response.data;
+      const responseMessage = response.data.response;
 
-      setMessages([
-        ...messages,
-        { text: data.transcription, isUserMessage: true },
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        { text: responseMessage, isUserMessage: false },
       ]);
-    } catch (error) {
-      console.error("Error sending audio:", error);
-    }
-  };
-
-  // Handle transcription result
-  async function handleReceivedTranscription() {
-    const payload = {
-      language: language,
-      conversation_history: messages,
-    };
-    const response = await axios.post("/api/v1/chat", payload, {
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    });
-
-    if (response.status !== 200) {
-      console.error(`Error: ${response.statusText}`);
-      return;
     }
 
-    const responseMessage = response.data.response;
-
-    setMessages([...messages, { text: responseMessage, isUserMessage: false }]);
-  }
+    const lastUserMessage =
+      messages.length === 0 || messages[messages.length - 1].isUserMessage;
+    if (lastUserMessage) {
+      handleReceivedTranscription();
+    }
+  }, [messages, language]);
 
   const handleAnalyze = async () => {
     const payload = {
