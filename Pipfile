@@ -16,9 +16,10 @@ langchain-openai = "*"
 langchainhub = "*"
 requests = "*"
 pydantic = "*"
-lxml = "*"
 gunicorn = "*"
 pytest = "*"
+python-docx = "*"
+pyjwt = "*"
 
 [dev-packages]
 

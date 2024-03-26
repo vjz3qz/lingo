@@ -28,27 +28,8 @@ def init_db(supabase_url, supabase_key):
 db_client = init_db(supabase_url, supabase_key)
 
 
-def create_user(name, previous_knowledge, interests):
-    """
-    Create a new user in the database
-    """
-    logging.info(f"Creating user: {name}")
-    
-    # Upload user data to Supabase
-    user_data = {
-        "name": name,
-        "previous_knowledge": previous_knowledge,
-        "interests": interests
-    }
-    response = db_client.table("users").insert(user_data).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to create user: {response['error']}")
-    else:
-        logging.info(f"User {name} created successfully")
 
-
-def update_user(user_id, name, previous_knowledge, interests):
+def update_user_in_db(user_id, name, previous_knowledge, interests):
     """
     Update an existing user in the database
     """
@@ -56,16 +37,19 @@ def update_user(user_id, name, previous_knowledge, interests):
     
     # Upload user data to Supabase
     user_data = {
+        "id": user_id,
         "name": name,
         "previous_knowledge": previous_knowledge,
         "interests": interests
     }
-    response = db_client.table("users").update(user_data).eq("name", user_id).execute()
     
-    if response["error"]:
-        logging.error(f"Failed to update user: {response['error']}")
-    else:
+    try:
+        data, count = db_client.table("users").upsert(user_data).execute()
         logging.info(f"User {user_id} updated successfully")
+        return 200
+    except Exception as e:
+        logging.error(f"Failed to update user: {e}")
+        return 500
 
 
 def create_proficiency_record(user_id, language, proficiency_level, feedback):
@@ -76,19 +60,18 @@ def create_proficiency_record(user_id, language, proficiency_level, feedback):
     
     # Upload proficiency record to Supabase
     proficiency_data = {
-        "id": str(uuid.uuid4()),  # Generate a new UUID for the record
-        "date": datetime.now(),  # Use current datetime
         "user_id": user_id,
         "language": language,
         "proficiency_level": proficiency_level,
         "feedback": feedback
     }
-    response = db_client.table("proficiency").insert(proficiency_data).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to create proficiency record: {response['error']}")
-    else:
+    try:
+        data, count = db_client.table("previous_proficiency_feedback").insert(proficiency_data).execute()
         logging.info(f"Proficiency record created successfully")
+        return 200
+    except Exception as e:
+        logging.error(f"Failed to create proficiency record: {e}")
+        return 500
 
 
 def get_user_data(user_id):
@@ -96,16 +79,22 @@ def get_user_data(user_id):
     Get user data from the database
     """
     logging.info(f"Getting user data for user: {user_id}")
-    
-    # Query user data from Supabase
-    response = db_client.table("users").select("*").eq("name", user_id).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to get user data: {response['error']}")
-        return None, None
-    else:
-        user_data = response["data"][0]
-        return user_data["name"], user_data["previous_knowledge"], user_data["interests"]
+    try:
+        # Query user data from Supabase
+        data, count = db_client.table("users").select("*").eq("id", user_id).execute()
+        data = data[1]
+        count = count[1]
+        if count == 1:
+            user_data = data[0]
+            name = user_data["name"]
+            previous_knowledge = user_data["previous_knowledge"]
+            interests = user_data["interests"]
+            return name, previous_knowledge, interests
+        else:
+            return None, None, None
+    except Exception as e:
+        logging.error(f"Failed to get user data: {e}")
+        return None, None, None
 
 
 def get_user_last_proficiency_by_language(user_id, language):
@@ -113,18 +102,21 @@ def get_user_last_proficiency_by_language(user_id, language):
     Get the last proficiency record for a user in a specific language
     """
     logging.info(f"Getting last proficiency record for user: {user_id} in language: {language}")
-    
-    # Query proficiency records from Supabase
-    response = db_client.table("proficiency").select("*").eq("user_id", user_id).order("timestamp", ascending=False).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to get proficiency records: {response['error']}")
-        return None, None
-    else:
-        proficiency_records = response["data"]
-        for record in proficiency_records:
-            if record["language"] == language:
-                return record["proficiency_level"], record["feedback"]
+    try:
+        # Query proficiency records from Supabase
+        data, count = db_client.table("previous_proficiency_feedback").select("*").eq("user_id", user_id).execute()
+        data = data[1]
+        count = count[1]
+        # TODO return latest record
+        if count is not None and count > 0:
+            proficiency_record = data[0]
+            proficiency_level = proficiency_record["proficiency_level"]
+            feedback = proficiency_record["feedback"]
+            return proficiency_level, feedback
+        else:
+            return None, None
+    except Exception as e:
+        logging.error(f"Failed to get last proficiency record: {e}")
         return None, None
 
 def get_user_proficiency_scores_by_language(user_id, language):
@@ -132,13 +124,20 @@ def get_user_proficiency_scores_by_language(user_id, language):
     Get all proficiency scores for a user in a specific language
     """
     logging.info(f"Getting proficiency scores for user: {user_id} in language: {language}")
-    
-    # Query proficiency records from Supabase
-    response = db_client.table("proficiency").select("proficiency_level").eq("user_id", user_id).eq("language", language).order("timestamp", ascending=False).execute()
-    
-    if response["error"]:
-        logging.error(f"Failed to get proficiency scores: {response['error']}")
-        return []
-    else:
-        proficiency_scores = [(record["timestamp"], record["proficiency_level"]) for record in response["data"]]
-        return proficiency_scores, response["data"][0]["feedback"]
+    try:
+        # Query proficiency records from Supabase
+        data, count = db_client.table("previous_proficiency_feedback").select("proficiency_level", "feedback", "timestamp").eq("user_id", user_id).eq("language", language).execute()
+        data = data[1]
+        count = count[1]
+        proficiency_scores = []
+        for record in data:
+            proficiency_scores.append({
+                "y": record["proficiency_level"],
+                "feedback": record["feedback"],
+                "timestamp": record["timestamp"]
+            })
+        
+        return proficiency_scores
+    except Exception as e:
+        logging.error(f"Failed to get proficiency scores: {e}")
+        return None

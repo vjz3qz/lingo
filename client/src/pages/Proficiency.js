@@ -1,139 +1,218 @@
-import React, { useState } from 'react';
-import { Container, Typography, Paper, Box, Drawer, List, ListItem, ListItemText, Grid, IconButton, Button } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import moment from 'moment';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-
-
-
-// Sample data for each language
-const languageData = {
-    Spanish: [
-        { datetime: '2023-09-01 08:00', y: 1, feedback: 'Getting started' },
-        { datetime: '2023-09-01 09:00', y: 10, feedback: 'Improvement visible' },
-        { datetime: '2023-09-01 10:00', y: 30, feedback: 'Good progress' },
-        { datetime: '2023-09-01 14:00', y: 90, feedback: 'Excellent work' },
-    ],
-    German: [
-        { datetime: '2023-09-01 09:30', y: 15, feedback: 'Improving' },
-        { datetime: '2023-09-01 09:45', y: 5, feedback: 'Improvement visible' },
-        { datetime: '2023-09-01 10:00', y: 25, feedback: 'Good progress' },
-        { datetime: '2023-09-01 14:00', y: 45, feedback: 'Excellent work' },
-    ],
-    French: [
-        { datetime: '2023-09-02 09:30', y: 40, feedback: 'Excellent' },
-        
-    ],
-};
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Container,
+  Typography,
+  Paper,
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Grid,
+  IconButton,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Ensure axios is imported
 
 const drawerWidth = 240;
 
-function ProficiencyPage() {
-    const navigate = useNavigate(); // Create an instance of useNavigate
+function ProficiencyPage({ session }) {
+  const sessionRef = useRef(session);
 
-    const [selectedLanguage, setSelectedLanguage] = useState('Spanish');
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State to manage drawer open/close
+  // Update the ref whenever the token changes
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
 
-    const toggleDrawer = () => {
-        setIsDrawerOpen(!isDrawerOpen);
-    };
+  const navigate = useNavigate();
+  const [selectedLanguage, setSelectedLanguage] = useState("spanish");
+  const [proficiencyScores, setProficiencyScores] = useState({});
 
+  useEffect(() => {
+    // Function to fetch proficiency scores from the server
+    async function fetchProficiencyScores(language) {
+      try {
+        const response = await axios.get(
+          `/api/v1/get-proficiency-scores/${language}`,
+          {
+            headers: {
+              Authorization: `Bearer ${sessionRef.current.access_token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          setProficiencyScores((prevScores) => ({
+            ...prevScores,
+            [language]: response.data.proficiency_scores,
+          }));
+        } else {
+          console.error("Failed to fetch data:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching proficiency scores:", error);
+      }
+    }
 
-    const selectedData = languageData[selectedLanguage];
-    const mostRecentData = selectedData[selectedData.length - 1] || {};
-    const mostRecentScore = mostRecentData.y;
-    const highestScore = Math.max(...selectedData.map(s => s.y));
-    const mostRecentFeedback = mostRecentData.feedback;
+    if (!sessionRef.current) {
+      navigate("/auth");
+    } else {
+      fetchProficiencyScores(selectedLanguage);
+    }
+  }, [selectedLanguage, navigate]);
 
-    // Determine speaker level based on the most recent score
-    const getSpeakerLevel = (score) => {
-        if (score >= 90) return 'Native';
-        if (score >= 70) return 'Expert';
-        if (score >= 40) return 'Intermediate';
-        return 'Novice';
-    };
-    const speakerLevel = getSpeakerLevel(mostRecentScore);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State to manage drawer open/close
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
 
-    return (
-    <Box sx={{ display: 'flex' }}>
-        <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={toggleDrawer}
-            sx={{ mr: 2 }}
-        >
-        <MenuIcon /> {/* Replace MenuIcon with ArrowForwardIosIcon if you prefer an arrow */}
-        </IconButton>
-        <Drawer
-            anchor="left"
-            open={isDrawerOpen}
-            onClose={toggleDrawer}
-            sx={{
-                width: drawerWidth,
-                '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' },
-            }}
-        >
+  const selectedData = proficiencyScores[selectedLanguage] || []; // Fallback to an empty array
+  const mostRecentData = selectedData[selectedData.length - 1] || {};
+  const mostRecentScore = mostRecentData.y || 0;
+  const highestScore = selectedData.length
+    ? Math.max(...selectedData.map((s) => s.y))
+    : 0;
+  const mostRecentFeedback = mostRecentData.feedback || "No data available";
+
+  // Function to determine speaker level
+  const getSpeakerLevel = (score) => {
+    if (score >= 90) return "Native";
+    if (score >= 70) return "Expert";
+    if (score >= 40) return "Intermediate";
+    return "Novice";
+  };
+  const speakerLevel = getSpeakerLevel(mostRecentScore);
+  return (
+    <Box sx={{ display: "flex" }}>
+      <IconButton
+        color="inherit"
+        aria-label="open drawer"
+        edge="start"
+        onClick={toggleDrawer}
+        sx={{ mr: 2 }}
+      >
+        <MenuIcon />{" "}
+      </IconButton>
+      <Drawer
+        anchor="left"
+        open={isDrawerOpen}
+        onClose={toggleDrawer}
+        sx={{
+          width: drawerWidth,
+          "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
+        }}
+      >
         <List>
-            {['Spanish', 'German', 'French'].map((language) => (
-            <ListItem button key={language} onClick={() => setSelectedLanguage(language)}>
-                <ListItemText primary={language} />
+          {["spanish", "german", "french"].map((language) => (
+            <ListItem
+              button
+              key={language}
+              onClick={() => setSelectedLanguage(language)}
+            >
+              <ListItemText primary={language} />
             </ListItem>
-            ))}
+          ))}
         </List>
-        </Drawer>
-        <Container component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-            Language Proficiency: {selectedLanguage}
+      </Drawer>
+      <Container component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Typography variant="h4" component="h1" gutterBotto align="center">
+          Language Proficiency: {selectedLanguage}
         </Typography>
         <Grid container spacing={3}>
-            <Grid item xs={12}>
+          <Grid item xs={12}>
             <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                    Most Recent Score: {mostRecentScore}
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                    Highest Score: {highestScore}
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                    Speaker Level: {speakerLevel}
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                    Most Recent Feedback: {mostRecentFeedback}
-                </Typography>
+              <Typography variant="h6" gutterBottom>
+                Most Recent Score: {mostRecentScore}
+              </Typography>
+              <Typography variant="h6" gutterBottom>
+                Highest Score: {highestScore}
+              </Typography>
+              <Typography variant="h6" gutterBottom>
+                Speaker Level: {speakerLevel}
+              </Typography>
+              <Typography variant="h6" gutterBottom>
+                Most Recent Feedback: {mostRecentFeedback}
+              </Typography>
             </Paper>
-            </Grid>
-            <Grid item xs={12}>
-            <Paper elevation={3} sx={{ p: 2, width: '100%', height: 400 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={selectedData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                    dataKey="datetime"
+          </Grid>
+          <Grid item xs={12}>
+            <Paper elevation={3} sx={{ p: 2, width: "100%", height: 400 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={selectedData}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="timestamp"
                     angle={-45}
                     textAnchor="end"
                     tick={{ fontSize: 10 }}
-                    tickFormatter={(datetime) => moment(datetime).format('YYYY-MM-DD HH:mm')}
+                    tickFormatter={(timestamp) => {
+                      return moment(
+                        timestamp,
+                        "YYYY-MM-DDTHH:mm:ss.SSSSSZ"
+                      ).format("YYYY-MM-DD HH:mm");
+                    }}
                     height={70}
-                    />
-                    <YAxis yAxisId="left" scale="linear" domain={['auto', 'auto']} />
-                    <Tooltip labelFormatter={(label) => moment(label).format('YYYY-MM-DD HH:mm')} />
-                    <Legend />
-                    <Line yAxisId="left" type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
+                  />
+                  <YAxis
+                    yAxisId="left"
+                    scale="linear"
+                    domain={["auto", "auto"]}
+                  />
+                  <Tooltip
+                    tickFormatter={(timestamp) => {
+                      return moment(
+                        timestamp,
+                        "YYYY-MM-DDTHH:mm:ss.SSSSSZ"
+                      ).format("YYYY-MM-DD HH:mm");
+                    }}
+                  />
+                  <Legend />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="y"
+                    stroke="#8884d8"
+                    activeDot={{ r: 8 }}
+                  />
                 </LineChart>
-                </ResponsiveContainer>
+              </ResponsiveContainer>
             </Paper>
-            </Grid>
+          </Grid>
         </Grid>
-        <Box sx={{ width: '100%', mt: 3, display: 'flex', justifyContent: 'center' }}>
-            <Button variant="contained" color="primary" onClick={() => navigate('/home')}>
-            Back to Home
-            </Button>
+        <Box
+          sx={{
+            width: "100%",
+            mt: 3,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <IconButton
+            color="primary"
+            onClick={() => navigate("/home")}
+            aria-label="go to home"
+          >
+            <HomeIcon fontSize="large" /> {/* Use the Home icon */}
+          </IconButton>
         </Box>
-        </Container>
+      </Container>
     </Box>
-    );
-    }
+  );
+}
 
-    export default ProficiencyPage;
+export default ProficiencyPage;
