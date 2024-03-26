@@ -7,7 +7,9 @@ Have a conversation with our AI and get instant feedback on the language you are
 - **Frontend**: React, Material-UI, Axios
 - **Backend**: Flask, Gunicorn, LangChain
 - **Database**: Supabase (Postgres)
+- **AI/NLP**: OpenAI, LangChain
 - **Deployment**: Render.com
+- **CI/CD**: GitHub Actions
 
 ## UI Flow
 
