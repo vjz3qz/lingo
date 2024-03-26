@@ -3,6 +3,7 @@
 - [x] Add user authentication
 - [x] Integrate/test backend with frontend
 - [ ] Deploy
+- [ ] Add session context/ref
 - [ ] Add speaker for AI
 - [ ] Add chat bar back
 - [ ] Add react markdown to chat
