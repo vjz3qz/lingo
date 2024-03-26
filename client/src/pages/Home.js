@@ -66,14 +66,21 @@ const LanguageOption = styled(Typography)({
 });
 
 function Home({ session }) {
+  const sessionRef = useRef(session);
+
+  // Update the ref whenever the token changes
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check if the user is authenticated
-    if (!session) {
+    if (!sessionRef.current) {
       navigate("/auth");
     }
-  }, []);
+  }, [navigate]);
   const [selectedLanguageIndex, setSelectedLanguageIndex] = useState(0);
   const languageButtonRef = useRef(null);
 

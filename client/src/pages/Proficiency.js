@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Container,
   Typography,
@@ -30,45 +30,52 @@ import axios from "axios"; // Ensure axios is imported
 const drawerWidth = 240;
 
 function ProficiencyPage({ session }) {
+  const sessionRef = useRef(session);
+
+  // Update the ref whenever the token changes
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
+
   const navigate = useNavigate();
   const [selectedLanguage, setSelectedLanguage] = useState("spanish");
   const [proficiencyScores, setProficiencyScores] = useState({});
 
   useEffect(() => {
-    if (!session) {
+    // Function to fetch proficiency scores from the server
+    async function fetchProficiencyScores(language) {
+      try {
+        const response = await axios.get(
+          `/api/v1/get-proficiency-scores/${language}`,
+          {
+            headers: {
+              Authorization: `Bearer ${sessionRef.current.access_token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          setProficiencyScores((prevScores) => ({
+            ...prevScores,
+            [language]: response.data.proficiency_scores,
+          }));
+        } else {
+          console.error("Failed to fetch data:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching proficiency scores:", error);
+      }
+    }
+
+    if (!sessionRef.current) {
       navigate("/auth");
     } else {
       fetchProficiencyScores(selectedLanguage);
     }
-  }, [session, selectedLanguage, navigate]);
+  }, [selectedLanguage, navigate]);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State to manage drawer open/close
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
-  };
-
-  // Function to fetch proficiency scores from the server
-  const fetchProficiencyScores = async (language) => {
-    try {
-      const response = await axios.get(
-        `/api/v1/get-proficiency-scores/${language}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        setProficiencyScores({
-          ...proficiencyScores,
-          [language]: response.data.proficiency_scores,
-        });
-      } else {
-        console.error("Failed to fetch data:", response.status);
-      }
-    } catch (error) {
-      console.error("Error fetching proficiency scores:", error);
-    }
   };
 
   const selectedData = proficiencyScores[selectedLanguage] || []; // Fallback to an empty array

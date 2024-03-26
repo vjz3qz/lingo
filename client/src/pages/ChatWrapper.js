@@ -1,6 +1,6 @@
 // ChatWrapper.js
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/Home.css";
 import Header from "../ui/Header";
@@ -9,13 +9,19 @@ import Chat from "../components/Chat";
 function ChatWrapper({ session }) {
   let { language } = useParams();
   const navigate = useNavigate();
+  const sessionRef = useRef(session);
+
+  // Update the ref whenever the token changes
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
 
   useEffect(() => {
     // Check if the user is authenticated
-    if (!session) {
+    if (!sessionRef.current) {
       navigate("/auth");
     }
-  }, []);
+  }, [navigate]);
   const user = {
     name: "Varun Pasupuleti",
     avatar: "path-to-avatar-image.png",

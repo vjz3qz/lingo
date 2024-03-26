@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Container,
   TextField,
-  Button,
   Typography,
   Box,
   Alert,
@@ -14,14 +13,21 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function LanguageLearningForm({ session }) {
+  const sessionRef = useRef(session);
+
+  // Update the ref whenever the token changes
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check if the user is authenticated
-    if (!session) {
+    if (!sessionRef.current) {
       navigate("/auth");
     }
-  }, []);
+  }, [navigate]);
+
   const [form, setForm] = useState({
     name: "",
     previous_knowledge: "",
